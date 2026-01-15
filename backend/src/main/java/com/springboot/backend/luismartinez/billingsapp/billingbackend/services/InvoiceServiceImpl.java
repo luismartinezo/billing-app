@@ -1,5 +1,6 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.services;
 
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +66,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         // simple invoice number generation: YYYYMMddHHmmss + random
         var fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         invoice.setInvoiceNumber(fmt.format(invoice.getCreatedAt()) + "-" + System.currentTimeMillis()%1000);
+
+        // ✅ SET INITIAL STATUS HERE
+        invoice.setStatus(InvoiceStatus.PENDING);
 
         return invoiceRepository.save(invoice);
     }

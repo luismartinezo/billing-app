@@ -1,5 +1,6 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.entities;
 
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -37,6 +38,10 @@ public class Invoice {
     @Column(name = "tax_rate")
     private Double taxRate = 0.19; // Default tax rate 19%
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private InvoiceStatus status;
+
     public Invoice() {
         this.items = new ArrayList<>();
         this.createdAt = LocalDateTime.now();
@@ -68,4 +73,8 @@ public class Invoice {
         item.setInvoice(null);
     }
 
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
