@@ -2,7 +2,9 @@ package com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.
 
 public enum InvoiceStatus {
     PENDING,
+    DRAFT,
+    ISSUED,
+    OVERDUE,
     PAID,
-    CANCELLED,
-    OVERDUE
+    CANCELLED
 }

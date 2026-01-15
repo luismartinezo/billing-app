@@ -11,6 +11,8 @@ import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositori
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.InvoiceRepository;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.ProductRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -45,10 +47,30 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public Invoice createInvoice(Invoice invoice) {
+        // Current date
+        LocalDateTime now = LocalDateTime.now();
+
+        // createdAt
+        invoice.setCreatedAt(now);
+        // issueDate (if it doesn't come from the frontend)
+        if (invoice.getIssueDate() == null) {
+            invoice.setIssueDate(LocalDate.now());
+        }
+        if (invoice.getStatus() == null) {
+            invoice.setStatus(InvoiceStatus.DRAFT);
+        }
+        // dueDate (example: 14 días)
+        if (invoice.getDueDate() == null) {
+            invoice.setDueDate(invoice.getIssueDate().plusDays(14));
+        }
         // validate customer
         Long customerId = invoice.getCustomer() != null ? invoice.getCustomer().getId() : null;
         if (customerId == null) {
             throw new IllegalArgumentException("Customer id is required");
+        }
+
+        if (invoice.getIssueDate() != null && invoice.getDueDate().isBefore(invoice.getIssueDate())) {
+            throw new IllegalArgumentException("Due date cannot be before issue date");
         }
 
         var customer = customerRepository.findById(customerId)

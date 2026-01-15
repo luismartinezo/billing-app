@@ -3,9 +3,11 @@ package com.springboot.backend.luismartinez.billingsapp.billingbackend.entities;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,15 @@ public class Invoice {
     @NotNull(message = "Creation date cannot be null")
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "issue_date")
+    private LocalDate issueDate;
+
+    @Column(name = "due_date")
+    private LocalDate dueDate;
+
+    @Column(name = "paid_at")
+    private LocalDateTime paidAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
@@ -77,4 +88,5 @@ public class Invoice {
     private void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
 }
