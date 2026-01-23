@@ -1,4 +1,4 @@
-# 🧾 Billing App – Sales and Product Management System
+# 🧾 LMInvoice – Sales and Product Management System
 
 ## 📋 Description
 

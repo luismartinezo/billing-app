@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -51,7 +52,7 @@ public class InvoiceController {
                     invoice.getItems().forEach(item -> {
                         productRepository.findById(item.getProduct().getId())
                                 .ifPresent(product -> {
-                                    item.setPrice(product.getPrice());
+                                    item.setPrice(BigDecimal.valueOf(product.getPrice()));
                                     item.setProduct(product);
                                 });
                     });

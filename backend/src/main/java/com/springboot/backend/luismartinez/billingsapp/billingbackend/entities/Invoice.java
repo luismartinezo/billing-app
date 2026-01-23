@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,48 +45,26 @@ public class Invoice {
     private Customer customer;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InvoiceItem> items;
+    private List<InvoiceItem> items = new ArrayList<>();;
 
-    @Column(name = "tax_rate")
-    private Double taxRate = 0.19; // Default tax rate 19%
+    @Column(name = "subtotal", precision = 15, scale = 2)
+    private BigDecimal subtotal;
+
+    @Column(name = "tax_rate", precision = 5, scale = 4)
+    private BigDecimal taxRate = BigDecimal.valueOf(0.19); // Default tax rate 19%
+
+    @Column(name = "tax_amount", precision = 15, scale = 2)
+    private BigDecimal taxAmount;
+
+    @Column(name = "total", precision = 15, scale = 2)
+    private BigDecimal total;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InvoiceStatus status;
 
-    public Invoice() {
-        this.items = new ArrayList<>();
-        this.createdAt = LocalDateTime.now();
-    }
-
-    // Calculated fields
-    public Double getSubtotal() {
-        return items.stream()
-                .mapToDouble(InvoiceItem::getSubtotal)
-                .sum();
-    }
-
-    public Double getTaxAmount() {
-        return getSubtotal() * taxRate;
-    }
-
-    public Double getTotal() {
-        return getSubtotal() + getTaxAmount();
-    }
-
-    // Helper method to add items
-    public void addItem(InvoiceItem item) {
-        items.add(item);
-        item.setInvoice(this);
-    }
-
-    public void removeItem(InvoiceItem item) {
-        items.remove(item);
-        item.setInvoice(null);
-    }
-
     @PrePersist
-    private void prePersist() {
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
