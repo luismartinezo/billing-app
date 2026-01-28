@@ -1,7 +1,8 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.services;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
-import jakarta.persistence.EntityNotFoundException;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.ResourceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -40,7 +40,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice getById(Long id) {
         return invoiceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Invoice not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Invoice with id " + id + " not found"));
     }
 
     @Override
