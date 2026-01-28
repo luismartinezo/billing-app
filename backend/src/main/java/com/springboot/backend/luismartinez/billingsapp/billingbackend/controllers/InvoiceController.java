@@ -1,6 +1,9 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.controllers;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Invoice;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.CustomerService;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.InvoiceService;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,57 +21,55 @@ import java.util.List;
 public class InvoiceController {
 
     @Autowired
-    private InvoiceRepository invoiceRepository;
+    private InvoiceService invoiceService;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerService customerService;
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
+
 
     @GetMapping
     public List<Invoice> getAllInvoices() {
-        return invoiceRepository.findAll();
+        return invoiceService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {
-        Invoice invoice = invoiceRepository.findByIdWithCustomerAndItems(id);
-        return invoice != null ? ResponseEntity.ok(invoice) : ResponseEntity.notFound().build();
+    public ResponseEntity<Invoice> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(invoiceService.getById(id));
     }
 
     @GetMapping("/customer/{customerId}")
-    public List<Invoice> getInvoicesByCustomer(@PathVariable Long customerId) {
-        return invoiceRepository.findByCustomerId(customerId);
+    public List<Invoice> getByCustomer(@PathVariable Long customerId) {
+        return invoiceService.getByCustomerId(customerId);
     }
 
     @PostMapping
-    public ResponseEntity<Invoice> createInvoice(@Valid @RequestBody Invoice invoice) {
-        // Verify customer exists
-        return customerRepository.findById(invoice.getCustomer().getId())
-                .map(customer -> {
-                    invoice.setCustomer(customer);
-                    // Set current price for each item
-                    invoice.getItems().forEach(item -> {
-                        productRepository.findById(item.getProduct().getId())
-                                .ifPresent(product -> {
-                                    item.setPrice(BigDecimal.valueOf(product.getPrice()));
-                                    item.setProduct(product);
-                                });
-                    });
-                    Invoice savedInvoice = invoiceRepository.save(invoice);
-                    return ResponseEntity.status(HttpStatus.CREATED).body(savedInvoice);
-                })
-                .orElse(ResponseEntity.badRequest().build());
+    public ResponseEntity<Invoice> create(@Valid @RequestBody Invoice invoice) {
+        Invoice created = invoiceService.createInvoice(invoice);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInvoice(@PathVariable Long id) {
-        return invoiceRepository.findById(id)
-                .map(invoice -> {
-                    invoiceRepository.delete(invoice);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        invoiceService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Status (PASO 5 y 6)
+    @PostMapping("/{id}/issue")
+    public Invoice issue(@PathVariable Long id) {
+        return invoiceService.issueInvoice(id);
+    }
+
+    @PostMapping("/{id}/pay")
+    public Invoice pay(@PathVariable Long id) {
+        return invoiceService.payInvoice(id);
+    }
+
+    @PostMapping("/{id}/cancel")
+    public Invoice cancel(@PathVariable Long id) {
+        return invoiceService.cancelInvoice(id);
     }
 }

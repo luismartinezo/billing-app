@@ -1,6 +1,7 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.services;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,17 +33,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     private ProductRepository productRepository;
 
     @Override
-    public List<Invoice> findAll() {
+    public List<Invoice> getAll() {
         return invoiceRepository.findAll();
     }
 
     @Override
-    public Optional<Invoice> findById(Long id) {
-        return Optional.ofNullable(invoiceRepository.findByIdWithCustomerAndItems(id));
+    public Invoice getById(Long id) {
+        return invoiceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Invoice not found"));
     }
 
     @Override
-    public List<Invoice> findByCustomerId(Long customerId) {
+    public List<Invoice> getByCustomerId(Long customerId) {
         return invoiceRepository.findByCustomerId(customerId);
     }
 
@@ -150,6 +152,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository.save(invoice);
     }
 
+    @Override
+    public Invoice payInvoice(Long id) {
+        return null;
+    }
+
     public Invoice markAsPaid(Long invoiceId) {
 
         Invoice invoice = getInvoiceOrThrow(invoiceId);
@@ -192,8 +199,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                         )
                 );
     }
-
-
 
     @Override
     public void delete(Long id) {
