@@ -1,6 +1,7 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.services;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.BusinessException;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.ResourceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
+@Transactional
 public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
@@ -154,9 +156,19 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice payInvoice(Long id) {
-        return null;
+    public Invoice payInvoice(Long invoiceId) {
+        Invoice invoice = getById(invoiceId);
+
+        if (invoice.getStatus() != InvoiceStatus.ISSUED) {
+            throw new BusinessException("Only issued invoices can be paid");
+        }
+
+        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setPaidAt(LocalDateTime.now());
+
+        return invoiceRepository.save(invoice);
     }
+
 
     public Invoice markAsPaid(Long invoiceId) {
 
@@ -175,7 +187,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     public Invoice cancelInvoice(Long invoiceId) {
 
-        Invoice invoice = getInvoiceOrThrow(invoiceId);
+        Invoice invoice = getById(invoiceId);
 
         if (invoice.getStatus() == InvoiceStatus.PAID) {
             throw new IllegalStateException("Paid invoices cannot be cancelled");
