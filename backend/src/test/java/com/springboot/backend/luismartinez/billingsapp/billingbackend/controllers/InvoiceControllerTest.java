@@ -36,7 +36,7 @@ public class InvoiceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("ISSUED"));
     }
-    
+
     @Test
     void shouldReturn400_whenBusinessExceptionThrown() throws Exception {
 

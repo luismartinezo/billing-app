@@ -1,6 +1,8 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.controllers;
 
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.InvoiceDTO;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Invoice;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.InvoiceMapper;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.CustomerService;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.InvoiceService;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.ProductService;
@@ -29,6 +31,8 @@ public class InvoiceController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private InvoiceMapper invoiceMapper;
 
     @GetMapping
     public List<Invoice> getAllInvoices() {
@@ -36,8 +40,9 @@ public class InvoiceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Invoice> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(invoiceService.getById(id));
+    public ResponseEntity<InvoiceDTO> getById(@PathVariable Long id) {
+        Invoice invoice = invoiceService.getById(id);
+        return ResponseEntity.ok(invoiceMapper.toDTO(invoice));
     }
 
     @GetMapping("/customer/{customerId}")
