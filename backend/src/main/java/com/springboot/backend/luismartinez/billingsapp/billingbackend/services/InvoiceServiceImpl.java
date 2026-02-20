@@ -1,5 +1,6 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.services;
 
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Payment;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.BusinessException;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.ResourceNotFoundException;
@@ -19,6 +20,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.Year;
 import java.util.List;
 
 @Service
@@ -98,7 +100,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // ✅ SET INITIAL STATUS HERE
         invoice.setStatus(InvoiceStatus.PENDING);
-
+        invoice.setInvoiceNumber(generateInvoiceNumber());
         calculateTotals(invoice);
 
         return invoiceRepository.save(invoice);
@@ -138,10 +140,21 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setTotal(subtotal.add(taxAmount));
     }
 
+//    Create a number generator service
+    private String generateInvoiceNumber() {
+
+        long count = invoiceRepository.count() + 1;
+
+        return String.format("INV-%d-%06d",
+                Year.now().getValue(),
+                count);
+    }
+
     public Invoice issueInvoice(Long invoiceId) {
 
-        Invoice invoice = getInvoiceOrThrow(invoiceId);
-
+//        Invoice invoice = getInvoiceOrThrow(invoiceId);
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new BusinessException("Invoice not found"));
         if (invoice.getStatus() != InvoiceStatus.DRAFT) {
             throw new IllegalStateException("Only DRAFT invoices can be issued");
         }
@@ -216,5 +229,39 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void delete(Long id) {
         invoiceRepository.findById(id).ifPresent(invoiceRepository::delete);
+    }
+
+    @Override
+    public Payment registerPayment(Long invoiceId, BigDecimal amount, String method) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new BusinessException("Invoice not found"));
+
+        if (invoice.getStatus() == InvoiceStatus.CANCELLED) {
+            throw new BusinessException("Cannot pay a cancelled invoice");
+        }
+
+        Payment payment = new Payment();
+        payment.setAmount(amount);
+        payment.setMethod(method);
+
+        invoice.addPayment(payment);
+
+        BigDecimal paidSoFar = invoice.getPayments().stream()
+                .map(Payment::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+//        if (paidSoFar.compareTo(invoice.getTotal()) >= 0) {
+//            invoice.setStatus(InvoiceStatus.PAID);
+//        }
+        BigDecimal newTotal = paidSoFar.add(amount);
+
+        if (newTotal.compareTo(invoice.getTotal()) > 0) {
+            throw new BusinessException("Payment exceeds invoice total");
+        }
+
+
+        invoiceRepository.save(invoice);
+
+        return payment;
     }
 }

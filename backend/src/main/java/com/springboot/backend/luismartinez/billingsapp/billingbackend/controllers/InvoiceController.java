@@ -1,7 +1,9 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.controllers;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.InvoiceDTO;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.PaymentRequest;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Invoice;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Payment;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.InvoiceMapper;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.CustomerService;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.InvoiceService;
@@ -24,6 +26,9 @@ public class InvoiceController {
 
     @Autowired
     private InvoiceService invoiceService;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Autowired
     private CustomerService customerService;
@@ -50,6 +55,23 @@ public class InvoiceController {
         return invoiceService.getByCustomerId(customerId);
     }
 
+    @GetMapping("/{id}/payments/list")
+    public List<Payment> getPayments(@PathVariable Long id){
+        return paymentRepository.findByInvoiceId(id);
+    }
+
+    @PostMapping("/{id}/payments/add")
+    public ResponseEntity<Payment> payInvoice(
+            @PathVariable Long id,
+            @RequestBody PaymentRequest request
+        ) {
+        Payment payment = invoiceService.registerPayment(
+                id,
+                request.getAmount(),
+                String.valueOf(request.getMethod())
+        );
+        return ResponseEntity.ok(payment);
+    }
     @PostMapping
     public ResponseEntity<Invoice> create(@Valid @RequestBody Invoice invoice) {
         Invoice created = invoiceService.createInvoice(invoice);

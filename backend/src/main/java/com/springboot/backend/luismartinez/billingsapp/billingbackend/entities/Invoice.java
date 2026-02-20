@@ -24,7 +24,7 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "invoice_number")
+    @Column(name = "invoice_number", unique = true, nullable = false)
     private String invoiceNumber;
 
     @NotNull(message = "Creation date cannot be null")
@@ -39,6 +39,8 @@ public class Invoice {
 
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
+
+    private String currency = "EUR";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
@@ -63,9 +65,17 @@ public class Invoice {
     @Column(nullable = false)
     private InvoiceStatus status;
 
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Payment> payments = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void addPayment(Payment payment) {
+        payments.add(payment);
+        payment.setInvoice(this);
     }
 
 }
