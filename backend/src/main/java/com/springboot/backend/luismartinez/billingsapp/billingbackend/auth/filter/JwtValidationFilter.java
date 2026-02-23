@@ -3,15 +3,10 @@ package com.springboot.backend.luismartinez.billingsapp.billingbackend.auth.filt
 import static com.springboot.backend.luismartinez.billingsapp.billingbackend.auth.TokenJwtConfig.*;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import com.springboot.backend.luismartinez.billingsapp.billingbackend.auth.SimpleGrantedAuthorityJsonCreator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -45,17 +40,23 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
 
         String token = header.replace(PREFIX_TOKEN, "");
         try {
-            Claims claims = Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(token).getPayload();
+            Claims claims = Jwts.parser()
+                    .verifyWith(SECRET_KEY)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
             String username = claims.getSubject();
-            // String username2 = (String) claims.get("username");
-            Object authoritiesClaims = claims.get("authorities");
 
-            Collection<? extends GrantedAuthority> roles = Arrays.asList(new ObjectMapper()
-            .addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityJsonCreator.class)
-                    .readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class));
+            List<String> roles = claims.get("authorities", List.class);
 
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, 
-                    roles);
+            List<SimpleGrantedAuthority> authorities =
+                    roles.stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .toList();
+
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             chain.doFilter(request, response);
 

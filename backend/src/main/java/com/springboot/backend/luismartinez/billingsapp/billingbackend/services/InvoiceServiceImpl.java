@@ -2,6 +2,7 @@ package com.springboot.backend.luismartinez.billingsapp.billingbackend.services;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Payment;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.PaymentMethod;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.BusinessException;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.ResourceNotFoundException;
 
@@ -242,7 +243,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Payment payment = new Payment();
         payment.setAmount(amount);
-        payment.setMethod(method);
+        payment.setMethod(PaymentMethod.valueOf(method));
 
         invoice.addPayment(payment);
 

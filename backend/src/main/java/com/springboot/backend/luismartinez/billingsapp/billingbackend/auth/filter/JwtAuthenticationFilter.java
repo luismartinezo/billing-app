@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.authenticationManager = authenticationManager;
     }
 
+//    Lee username/password del request, Llama a AuthenticationManager
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
@@ -48,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             username = user.getUsername();
             password = user.getPassword();
         } catch (IOException e) {
-            logger.error("Error processing JWT", e);
+            logger.error("Error reading login request", e);
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
@@ -56,6 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         return this.authenticationManager.authenticate(authenticationToken);
     }
 
+//    Genera JWT → Lo devuelve en header
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException {
@@ -65,16 +67,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = user.getUsername();
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
         boolean isAdmin = roles.stream().anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
-        Claims claims = Jwts
-                .claims()
-                .add("authorities", new ObjectMapper().writeValueAsString(roles))
-                .add("username", username)
-                .add("isAdmin", isAdmin)
-                .build();
+        //Claims claims = Jwts.claims().build();
+
 
         String jwt = Jwts.builder()
                 .subject(username)
-                .claims(claims)
+                .claim("authorities",
+                    roles.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toList())
+                .claim("username", username)
+                .claim("isAdmin", isAdmin)
                 .signWith(SECRET_KEY)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 3600000))
@@ -92,6 +95,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setStatus(200);
     }
 
+//    → Devuelve error login
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) throws IOException {
