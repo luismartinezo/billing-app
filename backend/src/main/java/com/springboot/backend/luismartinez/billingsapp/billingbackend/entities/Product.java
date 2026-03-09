@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Setter
 @Getter
 @Entity
@@ -25,7 +27,7 @@ public class Product {
 
     @NotNull(message = "Price cannot be null")
     @Positive(message = "Price must be greater than 0")
-    private Double price;
+    private BigDecimal price;
 
     @NotNull(message = "Stock cannot be null")
     @Positive(message = "Stock must be greater than 0")

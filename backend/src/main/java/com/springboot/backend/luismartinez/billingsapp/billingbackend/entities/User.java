@@ -1,8 +1,7 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.*;
+
 import static jakarta.persistence.GenerationType.*;
 
 import java.util.ArrayList;
@@ -14,13 +13,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.models.IUser;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -47,10 +39,12 @@ public class User implements IUser {
     private String lastname;
 
     @NotEmpty
+    @Column(unique = true)
     @Email
     private String email;
 
     @NotBlank
+    @Column(unique = true)
     @Size(min=4, max = 12)
     private String username;
 
@@ -66,14 +60,15 @@ public class User implements IUser {
         inverseJoinColumns = @JoinColumn(name="role_id"),
         uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "role_id"})}
     )
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
     public User() {
         this.roles = new ArrayList<>();
     }
 
     @Override
     public boolean isAdmin() {
-        return false;
+        return roles.stream()
+                .anyMatch(r -> r.getName().equals("ROLE_ADMIN"));
     }
 
     @Override
@@ -85,21 +80,21 @@ public class User implements IUser {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

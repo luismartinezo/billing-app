@@ -1,5 +1,8 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.controllers;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.InvoiceDTO;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.PaymentRequest;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Invoice;
@@ -8,6 +11,7 @@ import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.In
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.CustomerService;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.InvoiceService;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.ProductService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -100,5 +104,22 @@ public class InvoiceController {
     @PostMapping("/{id}/cancel")
     public Invoice cancel(@PathVariable Long id) {
         return invoiceService.cancelInvoice(id);
+    }
+
+    @GetMapping("/{id}/pdf")
+    public void pdf(@PathVariable Long id, HttpServletResponse response) throws Exception{
+
+        Invoice invoice=invoiceService.getById(id);
+
+        response.setContentType("application/pdf");
+
+        Document doc=new Document();
+        PdfWriter.getInstance(doc,response.getOutputStream());
+        doc.open();
+
+        doc.add(new Paragraph("Invoice "+invoice.getInvoiceNumber()));
+        doc.add(new Paragraph("Customer "+invoice.getCustomer().getFirstName()));
+
+        doc.close();
     }
 }
