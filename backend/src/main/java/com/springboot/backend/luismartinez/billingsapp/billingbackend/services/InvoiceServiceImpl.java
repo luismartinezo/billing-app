@@ -92,7 +92,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             var product = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Product not found: " + item.getProduct().getId()));
             item.setProduct(product);
-            item.setPrice(BigDecimal.valueOf(product.getPrice()));
+            item.setPrice(product.getPrice());
         }
 
         // simple invoice number generation: YYYYMMddHHmmss + random

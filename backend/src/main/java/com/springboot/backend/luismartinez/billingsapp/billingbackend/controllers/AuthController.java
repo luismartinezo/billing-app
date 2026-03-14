@@ -1,16 +1,15 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.controllers;
 
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.AuthUserResponse;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Role;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.User;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.RoleRepository;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +24,28 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthUserResponse> me(Authentication authentication) {
+
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow();
+
+        AuthUserResponse response = new AuthUserResponse();
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setName(user.getName());
+        response.setLastname(user.getLastname());
+        response.setRoles(
+                user.getRoles().stream()
+                        .map(Role::getName)
+                        .toList()
+        );
+
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user){
