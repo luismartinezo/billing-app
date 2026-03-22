@@ -1,1 +1,29 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p *ngIf="user">
+        Bienvenido, {{ user.name }} {{ user.lastname }}
+      </p>
+    </div>
+
+    <button (click)="logout()">Cerrar sesión</button>
+  </header>
+
+  <section class="dashboard-cards">
+    <div class="card" routerLink="/invoices">
+      <h3>Facturas</h3>
+      <p>Gestiona tus facturas</p>
+    </div>
+
+    <div class="card">
+      <h3>Clientes</h3>
+      <p>Administra tus clientes</p>
+    </div>
+
+    <div class="card">
+      <h3>Productos</h3>
+      <p>Controla tus productos</p>
+    </div>
+  </section>
+</div>
