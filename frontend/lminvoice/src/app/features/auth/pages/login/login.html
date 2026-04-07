@@ -1,5 +1,5 @@
 <div class="login-container">
-  <form class="login-form" (ngSubmit)="onSubmit()">
+  <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <h2>Iniciar sesión</h2>
 
     <div class="form-group">
@@ -7,8 +7,7 @@
       <input
         id="username"
         type="text"
-        name="username"
-        [(ngModel)]="credentials.username"
+        formControlName="username"
         required
         placeholder="Ingresa tu usuario"
       />
@@ -19,17 +18,18 @@
       <input
         id="password"
         type="password"
-        name="password"
-        [(ngModel)]="credentials.password"
+        formControlName="password"
         required
         placeholder="Ingresa tu contraseña"
       />
     </div>
 
-    <button type="submit" [disabled]="loading">
-      {{ loading ? 'Ingresando...' : 'Ingresar' }}
+    <button type="submit" [disabled]="loading() || loginForm.invalid">
+      {{ loading() ? 'Ingresando...' : 'Ingresar' }}
     </button>
 
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
+    }
   </form>
 </div>

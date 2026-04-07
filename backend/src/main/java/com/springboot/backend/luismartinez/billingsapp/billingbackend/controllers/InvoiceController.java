@@ -44,7 +44,7 @@ public class InvoiceController {
     @Autowired
     private InvoiceMapper invoiceMapper;
 
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public List<Invoice> getAllInvoices() {
         return invoiceService.getAll();

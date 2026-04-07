@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { API_CONFIG } from '../config/api.config';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest } from '../models/login-request';
@@ -10,9 +10,8 @@ import { User } from '../models/user';
   providedIn: 'root',
 })
 export class Auth {
+  private http = inject(HttpClient);
   private readonly baseUrl = API_CONFIG.baseUrl;
-
-  constructor(private http: HttpClient) {}
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http
@@ -25,7 +24,7 @@ export class Auth {
   }
 
   getMe(): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/auth/me`);
+    return this.http.get<User>(`${this.baseUrl}/api/v1/auth/me`);
   }
 
   saveUser(user: User): void {

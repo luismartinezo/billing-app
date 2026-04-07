@@ -1,0 +1,48 @@
+<div>
+  <h2>Nueva Factura</h2>
+
+  <div>
+    <label for="customerId">Cliente ID</label>
+    <input
+      id="customerId"
+      type="number"
+      [ngModel]="customerId()"
+      (ngModelChange)="customerId.set($event)"
+    />
+  </div>
+
+  <h3>Items</h3>
+
+  @for (item of items(); let i = $index; track i) {
+    <div>
+      <input
+        type="number"
+        [ngModel]="item.productId"
+        (ngModelChange)="updateItemProductId(i, $event)"
+        placeholder="Producto ID"
+      />
+
+      <input
+        type="number"
+        [ngModel]="item.quantity"
+        (ngModelChange)="updateItemQuantity(i, $event)"
+        placeholder="Cantidad"
+      />
+
+      <input
+        type="number"
+        [ngModel]="item.price"
+        (ngModelChange)="updateItemPrice(i, $event)"
+        placeholder="Precio"
+      />
+
+      <button type="button" (click)="removeItem(i)">Eliminar</button>
+    </div>
+  }
+
+  <button type="button" (click)="addItem()">Agregar item</button>
+
+  <h3>Total calculado: {{ total() }}</h3>
+
+  <button type="button" (click)="submit()">Guardar factura</button>
+</div>

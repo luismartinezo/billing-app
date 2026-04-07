@@ -1,29 +1,32 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { Invoice } from '../../services/invoice';
+import { Component, ChangeDetectionStrategy, signal, inject, effect } from '@angular/core';
+import { Invoice } from '../../models/invoice';
+import { InvoiceService } from '../../services/invoiceService';
 
 @Component({
   selector: 'app-invoice-list',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './invoice-list.html',
   styleUrl: './invoice-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InvoiceList implements OnInit {
-  invoices: any[] = [];
-  loading = false;
+export class InvoiceList {
+  private invoiceService = inject(InvoiceService);
 
-  constructor(private invoiceService: Invoice) {}
+  invoices = signal<Invoice[]>([]);
+  loading = signal(false);
 
-  ngOnInit(): void {
-    this.loading = true;
-    this.invoiceService.getAll().subscribe({
-      next: (data) => {
-        this.invoices = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      },
+  constructor() {
+    effect(() => {
+      this.loading.set(true);
+      this.invoiceService.getAll().subscribe({
+        next: (invoices) => {
+          this.invoices.set(invoices);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+        },
+      });
     });
   }
 }

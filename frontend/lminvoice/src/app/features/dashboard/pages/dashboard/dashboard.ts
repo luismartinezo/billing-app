@@ -1,22 +1,21 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Auth } from '../../../../core/services/auth';
+import { User } from '../../../../core/models/user';
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Dashboard {
-  user = this.authService.getUser();
+  private authService = inject(Auth);
+  private router = inject(Router);
 
-  constructor(
-    private authService: Auth,
-    private router: Router
-  ) {}
+  user = signal<User | null>(this.authService.getUser());
 
   logout(): void {
     this.authService.logout();

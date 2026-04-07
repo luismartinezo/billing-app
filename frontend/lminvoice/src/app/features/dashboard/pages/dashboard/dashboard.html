@@ -2,9 +2,11 @@
   <header class="dashboard-header">
     <div>
       <h1>Dashboard</h1>
-      <p *ngIf="user">
-        Bienvenido, {{ user.name }} {{ user.lastname }}
-      </p>
+      @if (user()) {
+        <p>
+          Bienvenido, {{ user()?.name }} {{ user()?.lastname }}
+        </p>
+      }
     </div>
 
     <button (click)="logout()">Cerrar sesión</button>
@@ -16,14 +18,18 @@
       <p>Gestiona tus facturas</p>
     </div>
 
-    <div class="card">
+    <div class="card" routerLink="/clients">
       <h3>Clientes</h3>
       <p>Administra tus clientes</p>
     </div>
 
-    <div class="card">
+    <div class="card" routerLink="/products">
       <h3>Productos</h3>
       <p>Controla tus productos</p>
+    </div>
+
+    <div class="card" routerLink="/invoices/new">
+      <h3>Nueva Factura</h3>
     </div>
   </section>
 </div>

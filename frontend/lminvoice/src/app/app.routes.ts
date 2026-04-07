@@ -25,6 +25,12 @@ export const routes: Routes = [
       m => m.InvoiceList
     )
 },
+{
+  path: 'invoices/new',
+  loadComponent: () =>
+    import('./features/invoices/pages/invoice-form/invoice-form')
+      .then(m => m.InvoiceForm)
+},
   {
     path: '',
     redirectTo: 'login',

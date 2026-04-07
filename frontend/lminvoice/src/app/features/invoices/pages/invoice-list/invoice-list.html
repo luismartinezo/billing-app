@@ -1,26 +1,34 @@
 <div>
   <h2>Facturas</h2>
 
-  <p *ngIf="loading">Cargando...</p>
+  @if (loading()) {
+    <p>Cargando...</p>
+  }
 
-  <table *ngIf="!loading && invoices.length > 0">
-    <thead>
-      <tr>
-        <th>Número</th>
-        <th>Cliente</th>
-        <th>Total</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let invoice of invoices">
-        <td>{{ invoice.invoiceNumber }}</td>
-        <td>{{ invoice.customer?.name }}</td>
-        <td>{{ invoice.total }}</td>
-        <td>{{ invoice.status }}</td>
-      </tr>
-    </tbody>
-  </table>
+  @if (!loading() && invoices().length > 0) {
+    <table>
+      <thead>
+        <tr>
+          <th>Número</th>
+          <th>Cliente</th>
+          <th>Total</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (invoice of invoices(); track invoice.id) {
+          <tr>
+            <td>{{ invoice.invoiceNumber }}</td>
+            <td>{{ invoice.customer?.name }}</td>
+            <td>{{ invoice.total }}</td>
+            <td>{{ invoice.status }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
 
-  <p *ngIf="!loading && invoices.length === 0">No hay facturas.</p>
+  @if (!loading() && invoices().length === 0) {
+    <p>No hay facturas.</p>
+  }
 </div>

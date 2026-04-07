@@ -1,52 +1,55 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../../../core/services/auth';
-import { LoginRequest } from '../../../../core/models/login-request';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Login {
-  credentials: LoginRequest = {
-    username: '',
-    password: ''
-  };
+  private authService = inject(Auth);
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
 
-  errorMessage = '';
-  loading = false;
+  loginForm = this.fb.group({
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]]
+  });
 
-  constructor(
-    private authService: Auth,
-    private router: Router
-  ) {}
+  errorMessage = signal('');
+  loading = signal(false);
 
   onSubmit(): void {
-    this.errorMessage = '';
-    this.loading = true;
+    if (this.loginForm.invalid) {
+      return;
+    }
 
-    this.authService.login(this.credentials).subscribe({
+    this.errorMessage.set('');
+    this.loading.set(true);
+
+    const credentials = this.loginForm.getRawValue();
+    
+    this.authService.login(credentials as any).subscribe({
       next: () => {
         this.authService.getMe().subscribe({
           next: (user) => {
             this.authService.saveUser(user);
-            this.loading = false;
+            this.loading.set(false);
             this.router.navigate(['/dashboard']);
           },
           error: () => {
-            this.loading = false;
-            this.errorMessage = 'The user session could not be obtained.';
+            this.loading.set(false);
+            this.errorMessage.set('The user session could not be obtained.');
           }
         });
       },
       error: () => {
-        this.loading = false;
-        this.errorMessage = 'Invalid username or password.';
+        this.loading.set(false);
+        this.errorMessage.set('Invalid username or password.');
       }
     });
   }
