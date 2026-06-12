@@ -46,7 +46,7 @@ public class InvoiceController {
                 .toList();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("detail/{id}")
     public ResponseEntity<InvoiceDTO> getById(@PathVariable Long id) {
         Invoice invoice = invoiceService.getById(id);
         return ResponseEntity.ok(invoiceMapper.toDTO(invoice));
@@ -78,13 +78,13 @@ public class InvoiceController {
         );
         return ResponseEntity.ok(paymentMapper.toDTO(payment));
     }
-    @PostMapping
+    @PostMapping("create")
     public ResponseEntity<InvoiceDTO> create(@Valid @RequestBody Invoice invoice) {
         Invoice created = invoiceService.createInvoice(invoice);
         return ResponseEntity.status(HttpStatus.CREATED).body(invoiceMapper.toDTO(created));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         invoiceService.delete(id);
         return ResponseEntity.noContent().build();

@@ -2,8 +2,6 @@ package com.springboot.backend.luismartinez.billingsapp.billingbackend.entities;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +25,6 @@ public class Invoice {
     @Column(name = "invoice_number", unique = true, nullable = false)
     private String invoiceNumber;
 
-    @NotNull(message = "Creation date cannot be null")
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

@@ -14,13 +14,13 @@ import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.I
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.InvoiceItem;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.CustomerRepository;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.InvoiceRepository;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.PaymentRepository;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.ProductRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.Year;
 import java.util.List;
 
@@ -36,6 +36,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Override
     public List<Invoice> getAll() {
@@ -95,11 +98,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             item.setPrice(product.getPrice());
         }
 
-        // simple invoice number generation: YYYYMMddHHmmss + random
-        var fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        invoice.setInvoiceNumber(fmt.format(invoice.getCreatedAt()) + "-" + System.currentTimeMillis()%1000);
-
-        // ✅ SET INITIAL STATUS HERE
         invoice.setStatus(InvoiceStatus.PENDING);
         invoice.setInvoiceNumber(generateInvoiceNumber());
         calculateTotals(invoice);
@@ -241,28 +239,33 @@ public class InvoiceServiceImpl implements InvoiceService {
             throw new BusinessException("Cannot pay a cancelled invoice");
         }
 
-        Payment payment = new Payment();
-        payment.setAmount(amount);
-        payment.setMethod(PaymentMethod.valueOf(method));
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("Payment amount must be greater than zero");
+        }
 
-        invoice.addPayment(payment);
-
-        BigDecimal paidSoFar = invoice.getPayments().stream()
+        BigDecimal paidSoFar = paymentRepository.findByInvoiceId(invoiceId).stream()
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-//        if (paidSoFar.compareTo(invoice.getTotal()) >= 0) {
-//            invoice.setStatus(InvoiceStatus.PAID);
-//        }
         BigDecimal newTotal = paidSoFar.add(amount);
 
         if (newTotal.compareTo(invoice.getTotal()) > 0) {
             throw new BusinessException("Payment exceeds invoice total");
         }
 
+        Payment payment = new Payment();
+        payment.setAmount(amount);
+        payment.setMethod(PaymentMethod.valueOf(method));
+        payment.setInvoice(invoice);
 
-        invoiceRepository.save(invoice);
+        Payment savedPayment = paymentRepository.save(payment);
 
-        return payment;
+        if (newTotal.compareTo(invoice.getTotal()) == 0) {
+            invoice.setStatus(InvoiceStatus.PAID);
+            invoice.setPaidAt(LocalDateTime.now());
+            invoiceRepository.save(invoice);
+        }
+
+        return savedPayment;
     }
 }

@@ -31,7 +31,7 @@ public class ProductController {
                 .toList();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("detail/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         return productRepository.findById(id)
                 .map(productMapper::toDTO)
@@ -39,13 +39,13 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("create")
     public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody Product product) {
         Product savedProduct = productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toDTO(savedProduct));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
         return productRepository.findById(id)
                 .map(existingProduct -> {
@@ -56,7 +56,7 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         return productRepository.findById(id)
                 .map(product -> {
