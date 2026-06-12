@@ -1,8 +1,10 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.controllers;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.AuthUserResponse;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.UserDTO;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Role;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.User;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.UserMapper;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.RoleRepository;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @GetMapping("/me")
     public ResponseEntity<AuthUserResponse> me(Authentication authentication) {
@@ -48,7 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user){
+    public ResponseEntity<UserDTO> register(@RequestBody User user){
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -57,6 +62,6 @@ public class AuthController {
 
         user.setRoles(List.of(roleUser));
 
-        return ResponseEntity.ok(userRepository.save(user));
+        return ResponseEntity.ok(userMapper.toDTO(userRepository.save(user)));
     }
 }

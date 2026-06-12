@@ -12,6 +12,7 @@ import { User } from '../models/user';
 export class Auth {
   private http = inject(HttpClient);
   private readonly baseUrl = API_CONFIG.baseUrl;
+  private readonly apiUrl = API_CONFIG.apiUrl;
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http
@@ -24,7 +25,7 @@ export class Auth {
   }
 
   getMe(): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/api/v1/auth/me`);
+    return this.http.get<User>(`${this.apiUrl}/auth/me`);
   }
 
   saveUser(user: User): void {

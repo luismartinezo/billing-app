@@ -24,21 +24,27 @@ public class InvoiceMapper {
         dto.setTaxAmount(invoice.getTaxAmount());
         dto.setTotal(invoice.getTotal());
 
-        dto.setCustomer(toCustomerDTO(invoice.getCustomer()));
+        if (invoice.getCustomer() != null) {
+            dto.setCustomer(toCustomerDTO(invoice.getCustomer()));
+        }
 
-        dto.setItems(
-                invoice.getItems().stream()
-                        .map(this::toItemDTO)
-                        .toList()
-        );
+        if (invoice.getItems() != null) {
+            dto.setItems(
+                    invoice.getItems().stream()
+                            .map(this::toItemDTO)
+                            .toList()
+            );
+        }
 
         return dto;
     }
 
     private InvoiceItemDTO toItemDTO(InvoiceItem item) {
         InvoiceItemDTO dto = new InvoiceItemDTO();
-        dto.setProductId(item.getProduct().getId());
-        dto.setProductName(item.getProduct().getName());
+        if (item.getProduct() != null) {
+            dto.setProductId(item.getProduct().getId());
+            dto.setProductName(item.getProduct().getName());
+        }
         dto.setPrice(item.getPrice());
         dto.setQuantity(item.getQuantity());
         dto.setTotal(item.getTotal());
@@ -48,7 +54,9 @@ public class InvoiceMapper {
     private CustomerDTO toCustomerDTO(Customer customer) {
         CustomerDTO dto = new CustomerDTO();
         dto.setId(customer.getId());
-        dto.setName(customer.getFirstName());
+        dto.setFirstName(customer.getFirstName());
+        dto.setLastName(customer.getLastName());
+        dto.setName(customer.getFirstName() + " " + customer.getLastName());
         dto.setEmail(customer.getEmail());
         return dto;
     }

@@ -3,11 +3,16 @@ package com.springboot.backend.luismartinez.billingsapp.billingbackend.controlle
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Invoice;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.enums.InvoiceStatus;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.BusinessException;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.InvoiceMapper;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.PaymentMapper;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.PaymentRepository;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.InvoiceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
@@ -16,12 +21,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(InvoiceController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@Import({InvoiceMapper.class, PaymentMapper.class})
 public class InvoiceControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private InvoiceService invoiceService;
+
+    @MockBean
+    private PaymentRepository paymentRepository;
 
     @Test
     void shouldIssueInvoice() throws Exception {
@@ -32,7 +42,7 @@ public class InvoiceControllerTest {
 
         when(invoiceService.issueInvoice(1L)).thenReturn(invoice);
 
-        mockMvc.perform(post("/api/invoices/1/issue"))
+        mockMvc.perform(post("/api/v1/invoices/1/issue"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("ISSUED"));
     }
@@ -43,7 +53,7 @@ public class InvoiceControllerTest {
         when(invoiceService.issueInvoice(1L))
                 .thenThrow(new BusinessException("Invalid state"));
 
-        mockMvc.perform(post("/api/invoices/1/issue"))
+        mockMvc.perform(post("/api/v1/invoices/1/issue"))
                 .andExpect(status().isBadRequest());
     }
 

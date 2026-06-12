@@ -9,10 +9,10 @@ import { Invoice, CreateInvoice } from '../models/invoice';
 })
 export class InvoiceService {
   private http = inject(HttpClient);
-  private readonly baseUrl = `${API_CONFIG.baseUrl}/api/v1/invoices/list`;
+  private readonly baseUrl = `${API_CONFIG.apiUrl}/invoices`;
 
   getAll(): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(this.baseUrl);
+    return this.http.get<Invoice[]>(`${this.baseUrl}/list`);
   }
 
   create(createInvoice: CreateInvoice): Observable<Invoice> {

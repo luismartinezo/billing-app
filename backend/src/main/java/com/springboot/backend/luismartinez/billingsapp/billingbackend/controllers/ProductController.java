@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.ProductDTO;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Product;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.ProductMapper;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.ProductRepository;
 
 import java.util.List;
@@ -19,30 +21,37 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDTO> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(productMapper::toDTO)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         return productRepository.findById(id)
+                .map(productMapper::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody Product product) {
         Product savedProduct = productRepository.save(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toDTO(savedProduct));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
         return productRepository.findById(id)
                 .map(existingProduct -> {
                     product.setId(id);
-                    return ResponseEntity.ok(productRepository.save(product));
+                    Product updatedProduct = productRepository.save(product);
+                    return ResponseEntity.ok(productMapper.toDTO(updatedProduct));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

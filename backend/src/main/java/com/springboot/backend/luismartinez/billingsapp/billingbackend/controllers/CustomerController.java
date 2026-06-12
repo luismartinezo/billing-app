@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.CustomerDTO;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Customer;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.CustomerMapper;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.CustomerRepository;
 
 import java.util.List;
@@ -19,30 +21,37 @@ public class CustomerController {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private CustomerMapper customerMapper;
+
     @GetMapping
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerDTO> getAllCustomers() {
+        return customerRepository.findAll().stream()
+                .map(customerMapper::toDTO)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
+    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
         return customerRepository.findById(id)
+                .map(customerMapper::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
+    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody Customer customer) {
         Customer savedCustomer = customerRepository.save(customer);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerMapper.toDTO(savedCustomer));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @Valid @RequestBody Customer customer) {
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @Valid @RequestBody Customer customer) {
         return customerRepository.findById(id)
                 .map(existingCustomer -> {
                     customer.setId(id);
-                    return ResponseEntity.ok(customerRepository.save(customer));
+                    Customer updatedCustomer = customerRepository.save(customer);
+                    return ResponseEntity.ok(customerMapper.toDTO(updatedCustomer));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

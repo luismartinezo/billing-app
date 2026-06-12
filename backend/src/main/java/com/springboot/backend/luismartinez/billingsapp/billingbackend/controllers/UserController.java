@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.UserDTO;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.User;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.UserMapper;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.models.UserRequest;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.UserService;
 
@@ -39,22 +41,27 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @GetMapping
-    public List<User> list() {
-        return service.findAll();
+    public List<UserDTO> list() {
+        return service.findAll().stream()
+                .map(userMapper::toDTO)
+                .toList();
     }
 
     @GetMapping("/page/{page}")
-    public Page<User> listPageable(@PathVariable Integer page) {
+    public Page<UserDTO> listPageable(@PathVariable Integer page) {
         Pageable pageable = PageRequest.of(page, 4);
-        return service.findAll(pageable);
+        return service.findAll(pageable).map(userMapper::toDTO);
     }
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<?> show(@PathVariable Long id) {
         Optional<User> userOptional = service.findById(id);
         if (userOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(userOptional.orElseThrow());
+            return ResponseEntity.status(HttpStatus.OK).body(userMapper.toDTO(userOptional.orElseThrow()));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap("error", "The user was not found by ID:" + id));
@@ -66,7 +73,7 @@ public class UserController {
         if (result.hasErrors()) {
             return validation(result);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDTO(service.save(user)));
     }
 
 
@@ -81,7 +88,7 @@ public class UserController {
         Optional<User> userOptional = service.update(user, id);
 
         if (userOptional.isPresent()) {
-            return ResponseEntity.ok(userOptional.orElseThrow());
+            return ResponseEntity.ok(userMapper.toDTO(userOptional.orElseThrow()));
         }
         return ResponseEntity.notFound().build();
     }

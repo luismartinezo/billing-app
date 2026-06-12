@@ -58,3 +58,48 @@ button:disabled {
   color: #dc2626;
   text-align: center;
 }
+
+/* BACKGROUNDS */
+.gray-bg,
+.bg-muted {
+  background-color: #f3f3f4;
+}
+.client-detail .vertical-timeline-icon.gray-bg {
+  color: #a7aaab;
+}
+/* ERROR & LOGIN & LOCKSCREEN*/
+.middle-box {
+  max-width: 400px;
+  z-index: 100;
+  margin: 0 auto;
+  padding-top: 40px;
+}
+.lockscreen.middle-box {
+  width: 200px;
+  padding-top: 110px;
+}
+.loginscreen.middle-box {
+  width: 300px;
+}
+.animated.modal.fade .modal-dialog {
+  -webkit-transform: none;
+  -ms-transform: none;
+  -o-transform: none;
+  transform: none;
+}
+.fullscreen-ibox-mode .animated {
+  animation: none;
+}
+.logo-name {
+  color: #e6e6e6;
+  font-size: 180px;
+  font-weight: 800;
+  letter-spacing: -10px;
+  margin-bottom: 0;
+}
+.m-t {
+  margin-top: 15px;
+}
+.text-muted {
+  color: #888888 !important;
+}

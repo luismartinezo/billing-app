@@ -2,19 +2,22 @@ package com.springboot.backend.luismartinez.billingsapp.billingbackend;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Role;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.User;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.config.OpenAiProperties;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.RoleRepository;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @SpringBootApplication
+@EnableConfigurationProperties(OpenAiProperties.class)
 public class BillingBackendApplication {
 
 	public static void main(String[] args) {
@@ -23,6 +26,7 @@ public class BillingBackendApplication {
 	}
 
 	@Component
+	@Profile("!test")
 	public static class DataInitializer implements CommandLineRunner {
 
 		@Autowired

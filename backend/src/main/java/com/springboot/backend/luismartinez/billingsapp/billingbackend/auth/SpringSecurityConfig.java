@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,10 +32,6 @@ import com.springboot.backend.luismartinez.billingsapp.billingbackend.auth.filte
 @Configuration
 public class SpringSecurityConfig {
     private static final String[] WHITE_LIST_URL = {
-            "/api/auth/**",
-            "/api/users/**",
-            "/api/products/**",
-            "/api/customers/**",
             "/images/**",
             "/public/**",
             "/v2/api-docs",
@@ -48,6 +45,9 @@ public class SpringSecurityConfig {
             "/webjars/**",
             "/swagger-ui.html",
             "/swagger-ui/index.html"};
+
+    @Value("${api.version:/api/v1}")
+    private String apiVersion;
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
@@ -64,16 +64,21 @@ public class SpringSecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        String api = apiVersion;
 
         return http.authorizeHttpRequests(auths -> auths
                         .requestMatchers(WHITE_LIST_URL).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/users/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
-                .requestMatchers("/api/products/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/customers/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/invoices/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                .requestMatchers(api + "/auth/register").permitAll()
+                .requestMatchers(HttpMethod.GET, api + "/users/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.POST, api + "/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, api + "/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, api + "/users/**").hasRole("ADMIN")
+                .requestMatchers(api + "/products/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(api + "/customers/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(api + "/invoices/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(api + "/ai/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(configurationSource()))
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))

@@ -1,9 +1,10 @@
-<div>
+<div class="container">
   <h2>Nueva Factura</h2>
 
-  <div>
+  <div class="col">
     <label for="customerId">Cliente ID</label>
     <input
+    class="form-control" placeholder="Client Id"
       id="customerId"
       type="number"
       [ngModel]="customerId()"
@@ -14,35 +15,44 @@
   <h3>Items</h3>
 
   @for (item of items(); let i = $index; track i) {
-    <div>
+    <div class="row">
+      <div class="col">
       <input
+      class="form-control"
         type="number"
         [ngModel]="item.productId"
         (ngModelChange)="updateItemProductId(i, $event)"
         placeholder="Producto ID"
       />
-
+      </div>
+      <div class="col">
       <input
+      class="form-control"
         type="number"
         [ngModel]="item.quantity"
         (ngModelChange)="updateItemQuantity(i, $event)"
         placeholder="Cantidad"
       />
-
+      </div>
+      <div class="col">
       <input
+      class="form-control"
         type="number"
         [ngModel]="item.price"
         (ngModelChange)="updateItemPrice(i, $event)"
         placeholder="Precio"
       />
+        </div>
+      </div>
+      <br>
+      <button type="button" class="btn btn-danger" (click)="removeItem(i)">Eliminar</button>
 
-      <button type="button" (click)="removeItem(i)">Eliminar</button>
-    </div>
   }
 
-  <button type="button" (click)="addItem()">Agregar item</button>
+  <button type="button" class="btn btn-success" (click)="addItem()">Agregar item</button>
 
   <h3>Total calculado: {{ total() }}</h3>
 
-  <button type="button" (click)="submit()">Guardar factura</button>
+  <button type="button" class="btn btn-primary" (click)="submit()">Guardar factura</button>
 </div>
+
