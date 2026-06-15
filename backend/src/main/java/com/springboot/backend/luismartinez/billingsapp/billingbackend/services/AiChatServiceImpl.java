@@ -1,20 +1,19 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.services;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.AiChatRequest;
-import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.AiChatResponse;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AiChatServiceImpl implements AiChatService {
 
-    private final AiProvider aiProvider;
+    private final InvoiceAgentService invoiceAgentService;
 
-    public AiChatServiceImpl(AiProvider aiProvider) {
-        this.aiProvider = aiProvider;
+    public AiChatServiceImpl(InvoiceAgentService invoiceAgentService) {
+        this.invoiceAgentService = invoiceAgentService;
     }
 
     @Override
-    public AiChatResponse chat(AiChatRequest request) {
-        return new AiChatResponse(aiProvider.generateReply(request.getMessage()));
+    public String chat(AiChatRequest request) {
+        return invoiceAgentService.handleMessage(request.getMessage());
     }
 }

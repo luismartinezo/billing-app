@@ -7,7 +7,7 @@ public class OpenAiProperties {
 
     private String apiKey;
     private String baseUrl = "https://api.openai.com/v1";
-    private String model = "gpt-5.2";
+    private String model = "gpt-4.1-mini";
 
     public String getApiKey() {
         return apiKey;

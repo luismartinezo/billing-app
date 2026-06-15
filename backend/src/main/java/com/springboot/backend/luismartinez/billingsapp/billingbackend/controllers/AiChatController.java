@@ -1,9 +1,9 @@
 package com.springboot.backend.luismartinez.billingsapp.billingbackend.controllers;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.AiChatRequest;
-import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.AiChatResponse;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.services.AiChatService;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +22,8 @@ public class AiChatController {
         this.aiChatService = aiChatService;
     }
 
-    @PostMapping("/chat")
-    public ResponseEntity<AiChatResponse> chat(@Valid @RequestBody AiChatRequest request) {
+    @PostMapping(value = "/chat", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> chat(@Valid @RequestBody AiChatRequest request) {
         return ResponseEntity.ok(aiChatService.chat(request));
     }
 }
