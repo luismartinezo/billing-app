@@ -31,7 +31,7 @@ public class CustomerController {
                 .toList();
     }
 
-    @GetMapping("detail/{id}")
+    @GetMapping({"/{id}", "detail/{id}"})
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
         return customerRepository.findById(id)
                 .map(customerMapper::toDTO)
@@ -39,13 +39,13 @@ public class CustomerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("create")
+    @PostMapping({"", "create"})
     public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody Customer customer) {
         Customer savedCustomer = customerRepository.save(customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(customerMapper.toDTO(savedCustomer));
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping({"/{id}", "update/{id}"})
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @Valid @RequestBody Customer customer) {
         return customerRepository.findById(id)
                 .map(existingCustomer -> {
@@ -56,7 +56,7 @@ public class CustomerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping({"/{id}", "delete/{id}"})
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         return customerRepository.findById(id)
                 .map(customer -> {
