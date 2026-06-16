@@ -3,16 +3,19 @@ import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@a
 import { FormsModule } from '@angular/forms';
 import { Product, ProductPayload } from '../../models/product';
 import { ProductService } from '../../services/product.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslationService } from '../../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-product-list',
-  imports: [FormsModule, CurrencyPipe],
+  imports: [FormsModule, CurrencyPipe, TranslatePipe],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductList {
   private productService = inject(ProductService);
+  private translationService = inject(TranslationService);
 
   products = signal<Product[]>([]);
   loading = signal(true);
@@ -60,7 +63,7 @@ export class ProductList {
     this.clearMessages();
 
     if (!this.form().name || this.form().price <= 0 || this.form().stock <= 0) {
-      this.errorMessage.set('Nombre, precio y stock válido son obligatorios.');
+      this.errorMessage.set(this.translationService.translate('product.required'));
       return;
     }
 
@@ -71,13 +74,15 @@ export class ProductList {
 
     request.subscribe({
       next: () => {
-        this.successMessage.set(this.editingId() ? 'Producto actualizado.' : 'Producto creado.');
+        this.successMessage.set(this.editingId()
+          ? this.translationService.translate('product.updated')
+          : this.translationService.translate('product.created'));
         this.resetForm();
         this.loadProducts();
         this.saving.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudo guardar el producto.');
+        this.errorMessage.set(this.translationService.translate('product.saveError'));
         this.saving.set(false);
       }
     });
@@ -101,10 +106,10 @@ export class ProductList {
 
     this.productService.delete(product.id).subscribe({
       next: () => {
-        this.successMessage.set('Producto eliminado.');
+        this.successMessage.set(this.translationService.translate('product.deleted'));
         this.loadProducts();
       },
-      error: () => this.errorMessage.set('No se pudo eliminar el producto.')
+      error: () => this.errorMessage.set(this.translationService.translate('product.deleteError'))
     });
   }
 
@@ -126,7 +131,7 @@ export class ProductList {
         this.loading.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudieron cargar los productos.');
+        this.errorMessage.set(this.translationService.translate('product.loadError'));
         this.loading.set(false);
       }
     });

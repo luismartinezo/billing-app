@@ -1,8 +1,8 @@
 <section class="page-heading">
   <div>
-    <span class="eyebrow">Catálogo</span>
-    <h1>Clientes</h1>
-    <p>Administra los datos de facturación de tus clientes.</p>
+    <span class="eyebrow">{{ 'customer.catalog' | translate }}</span>
+    <h1>{{ 'customer.title' | translate }}</h1>
+    <p>{{ 'customer.description' | translate }}</p>
   </div>
 </section>
 
@@ -18,41 +18,41 @@
   <article class="panel">
     <div class="panel-header">
       <div>
-        <h2>{{ editingId() ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
-        <p>Información de contacto y facturación</p>
+        <h2>{{ editingId() ? ('customer.edit' | translate) : ('customer.new' | translate) }}</h2>
+        <p>{{ 'customer.formHint' | translate }}</p>
       </div>
     </div>
 
     <form (ngSubmit)="submit()" class="catalog-form">
       <div class="row g-3">
         <div class="col-12 col-md-6">
-          <label class="form-label">Nombre</label>
+          <label class="form-label">{{ 'customer.firstName' | translate }}</label>
           <input class="form-control" [ngModel]="form().firstName" name="firstName" (ngModelChange)="updateField('firstName', $event)" />
         </div>
         <div class="col-12 col-md-6">
-          <label class="form-label">Apellido</label>
+          <label class="form-label">{{ 'customer.lastName' | translate }}</label>
           <input class="form-control" [ngModel]="form().lastName" name="lastName" (ngModelChange)="updateField('lastName', $event)" />
         </div>
         <div class="col-12">
-          <label class="form-label">Email</label>
+          <label class="form-label">{{ 'app.email' | translate }}</label>
           <input class="form-control" type="email" [ngModel]="form().email" name="email" (ngModelChange)="updateField('email', $event)" />
         </div>
         <div class="col-12">
-          <label class="form-label">Dirección</label>
+          <label class="form-label">{{ 'customer.address' | translate }}</label>
           <input class="form-control" [ngModel]="form().address" name="address" (ngModelChange)="updateField('address', $event)" />
         </div>
         <div class="col-12">
-          <label class="form-label">Teléfono</label>
+          <label class="form-label">{{ 'app.phone' | translate }}</label>
           <input class="form-control" [ngModel]="form().phone" name="phone" (ngModelChange)="updateField('phone', $event)" />
         </div>
       </div>
 
       <div class="form-actions">
         <button class="btn btn-primary" type="submit" [disabled]="saving()">
-          {{ saving() ? 'Guardando...' : editingId() ? 'Actualizar' : 'Crear cliente' }}
+          {{ saving() ? ('app.creating' | translate) : editingId() ? ('app.update' | translate) : ('customer.create' | translate) }}
         </button>
         @if (editingId()) {
-          <button class="btn btn-light" type="button" (click)="resetForm()">Cancelar</button>
+          <button class="btn btn-light" type="button" (click)="resetForm()">{{ 'app.cancel' | translate }}</button>
         }
       </div>
     </form>
@@ -61,30 +61,30 @@
   <article class="panel">
     <div class="panel-header">
       <div>
-        <h2>Listado</h2>
-        <p>{{ customers().length }} clientes registrados</p>
+        <h2>{{ 'app.list' | translate }}</h2>
+        <p>{{ customers().length }} {{ 'customer.registered' | translate }}</p>
       </div>
     </div>
 
     <input
       class="form-control mb-3"
       type="search"
-      placeholder="Buscar cliente"
+      [placeholder]="'customer.search' | translate"
       [value]="searchTerm()"
       (input)="searchTerm.set($any($event.target).value)"
     />
 
     @if (loading()) {
-      <div class="state-box">Cargando clientes...</div>
+      <div class="state-box">{{ 'customer.loading' | translate }}</div>
     } @else if (filteredCustomers().length > 0) {
       <div class="table-responsive">
         <table class="table align-middle mb-0">
           <thead>
             <tr>
-              <th>Cliente</th>
-              <th>Email</th>
-              <th>Teléfono</th>
-              <th class="text-end">Acciones</th>
+              <th>{{ 'invoice.customer' | translate }}</th>
+              <th>{{ 'app.email' | translate }}</th>
+              <th>{{ 'app.phone' | translate }}</th>
+              <th class="text-end">{{ 'app.actions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -92,13 +92,13 @@
               <tr>
                 <td>
                   <strong>{{ customer.name }}</strong>
-                  <span>{{ customer.address || 'Sin dirección' }}</span>
+                  <span>{{ customer.address || ('customer.noAddress' | translate) }}</span>
                 </td>
                 <td>{{ customer.email }}</td>
                 <td>{{ customer.phone || '-' }}</td>
                 <td class="text-end">
-                  <button class="btn btn-sm btn-outline-secondary" type="button" (click)="edit(customer)">Editar</button>
-                  <button class="btn btn-sm btn-outline-danger ms-2" type="button" (click)="remove(customer)">Eliminar</button>
+                  <button class="btn btn-sm btn-outline-secondary" type="button" (click)="edit(customer)">{{ 'app.edit' | translate }}</button>
+                  <button class="btn btn-sm btn-outline-danger ms-2" type="button" (click)="remove(customer)">{{ 'app.delete' | translate }}</button>
                 </td>
               </tr>
             }
@@ -106,7 +106,7 @@
         </table>
       </div>
     } @else {
-      <div class="state-box empty">No hay clientes para mostrar.</div>
+      <div class="state-box empty">{{ 'customer.empty' | translate }}</div>
     }
   </article>
 </section>

@@ -3,10 +3,11 @@ import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@a
 import { RouterLink } from '@angular/router';
 import { Invoice } from '../../models/invoice';
 import { InvoiceService } from '../../services/invoiceService';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-invoice-list',
-  imports: [RouterLink, CurrencyPipe],
+  imports: [RouterLink, CurrencyPipe, TranslatePipe],
   templateUrl: './invoice-list.html',
   styleUrl: './invoice-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush

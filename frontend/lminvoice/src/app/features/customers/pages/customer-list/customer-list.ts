@@ -2,16 +2,19 @@ import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@a
 import { FormsModule } from '@angular/forms';
 import { Customer, CustomerPayload } from '../../models/customer';
 import { CustomerService } from '../../services/customer.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslationService } from '../../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-customer-list',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './customer-list.html',
   styleUrl: './customer-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomerList {
   private customerService = inject(CustomerService);
+  private translationService = inject(TranslationService);
 
   customers = signal<Customer[]>([]);
   loading = signal(true);
@@ -57,7 +60,7 @@ export class CustomerList {
     this.clearMessages();
 
     if (!this.form().firstName || !this.form().lastName || !this.form().email) {
-      this.errorMessage.set('Nombre, apellido y email son obligatorios.');
+      this.errorMessage.set(this.translationService.translate('customer.required'));
       return;
     }
 
@@ -68,13 +71,15 @@ export class CustomerList {
 
     request.subscribe({
       next: () => {
-        this.successMessage.set(this.editingId() ? 'Cliente actualizado.' : 'Cliente creado.');
+        this.successMessage.set(this.editingId()
+          ? this.translationService.translate('customer.updated')
+          : this.translationService.translate('customer.created'));
         this.resetForm();
         this.loadCustomers();
         this.saving.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudo guardar el cliente.');
+        this.errorMessage.set(this.translationService.translate('customer.saveError'));
         this.saving.set(false);
       }
     });
@@ -99,10 +104,10 @@ export class CustomerList {
 
     this.customerService.delete(customer.id).subscribe({
       next: () => {
-        this.successMessage.set('Cliente eliminado.');
+        this.successMessage.set(this.translationService.translate('customer.deleted'));
         this.loadCustomers();
       },
-      error: () => this.errorMessage.set('No se pudo eliminar el cliente.')
+      error: () => this.errorMessage.set(this.translationService.translate('customer.deleteError'))
     });
   }
 
@@ -125,7 +130,7 @@ export class CustomerList {
         this.loading.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudieron cargar los clientes.');
+        this.errorMessage.set(this.translationService.translate('customer.loadError'));
         this.loading.set(false);
       }
     });

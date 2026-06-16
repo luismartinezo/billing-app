@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CreatePayment, Invoice, Payment, PaymentMethod } from '../../models/invoice';
 import { InvoiceService } from '../../services/invoiceService';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslationService } from '../../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-invoice-detail',
-  imports: [CurrencyPipe, DatePipe, FormsModule, RouterLink],
+  imports: [CurrencyPipe, DatePipe, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './invoice-detail.html',
   styleUrl: './invoice-detail.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -15,6 +17,7 @@ import { InvoiceService } from '../../services/invoiceService';
 export class InvoiceDetail {
   private route = inject(ActivatedRoute);
   private invoiceService = inject(InvoiceService);
+  private translationService = inject(TranslationService);
 
   invoice = signal<Invoice | null>(null);
   payments = signal<Payment[]>([]);
@@ -39,7 +42,7 @@ export class InvoiceDetail {
 
     const amount = Number(this.paymentAmount());
     if (!amount || amount <= 0) {
-      this.errorMessage.set('Ingresa un monto de pago válido.');
+      this.errorMessage.set(this.translationService.translate('invoice.paymentAmountError'));
       return;
     }
 
@@ -51,14 +54,14 @@ export class InvoiceDetail {
     this.savingPayment.set(true);
     this.invoiceService.addPayment(this.invoiceId(), payload).subscribe({
       next: () => {
-        this.successMessage.set('Pago registrado correctamente.');
+        this.successMessage.set(this.translationService.translate('invoice.paymentCreated'));
         this.paymentAmount.set(null);
         this.paymentMethod.set('CASH');
         this.loadInvoice();
         this.savingPayment.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudo registrar el pago.');
+        this.errorMessage.set(this.translationService.translate('invoice.paymentError'));
         this.savingPayment.set(false);
       }
     });
@@ -76,7 +79,7 @@ export class InvoiceDetail {
         this.downloadingPdf.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudo abrir el PDF de la factura.');
+        this.errorMessage.set(this.translationService.translate('invoice.pdfError'));
         this.downloadingPdf.set(false);
       }
     });
@@ -96,7 +99,7 @@ export class InvoiceDetail {
         this.loadPayments(id);
       },
       error: () => {
-        this.errorMessage.set('No se pudo cargar la factura.');
+        this.errorMessage.set(this.translationService.translate('invoice.loadError'));
         this.loading.set(false);
       }
     });
@@ -109,7 +112,7 @@ export class InvoiceDetail {
         this.loading.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudieron cargar los pagos.');
+        this.errorMessage.set(this.translationService.translate('invoice.paymentsLoadError'));
         this.loading.set(false);
       }
     });

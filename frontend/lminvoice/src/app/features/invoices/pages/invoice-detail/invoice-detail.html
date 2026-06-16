@@ -1,15 +1,15 @@
 <section class="page-heading">
   <div>
-    <span class="eyebrow">Factura</span>
-    <h1>{{ invoice()?.invoiceNumber || 'Detalle' }}</h1>
-    <p>{{ invoice()?.customer?.name || 'Cliente sin asignar' }}</p>
+    <span class="eyebrow">{{ 'invoice.single' | translate }}</span>
+    <h1>{{ invoice()?.invoiceNumber || ('invoice.detail' | translate) }}</h1>
+    <p>{{ invoice()?.customer?.name || ('invoice.unassignedCustomer' | translate) }}</p>
   </div>
 
   <div class="heading-actions">
-    <a class="btn btn-light" routerLink="/invoices">Volver</a>
+    <a class="btn btn-light" routerLink="/invoices">{{ 'app.back' | translate }}</a>
     @if (invoice()?.id) {
       <button class="btn btn-primary" type="button" (click)="openPdf()" [disabled]="downloadingPdf()">
-        {{ downloadingPdf() ? 'Abriendo...' : 'Abrir PDF' }}
+        {{ downloadingPdf() ? ('invoice.openingPdf' | translate) : ('invoice.openPdf' | translate) }}
       </button>
     }
   </div>
@@ -24,50 +24,50 @@
 }
 
 @if (loading()) {
-  <div class="state-box">Cargando factura...</div>
+  <div class="state-box">{{ 'dashboard.loadingInvoices' | translate }}</div>
 } @else if (invoice()) {
   <section class="detail-grid">
     <article class="panel">
       <div class="panel-header">
         <div>
-          <h2>Resumen</h2>
-          <p>Estado, fechas y totales</p>
+          <h2>{{ 'invoice.summary' | translate }}</h2>
+          <p>{{ 'invoice.summaryHint' | translate }}</p>
         </div>
         <span [class]="'status-badge ' + statusClass(invoice()?.status)">
-          {{ invoice()?.status || 'UNKNOWN' }}
+          {{ 'status.' + (invoice()?.status || 'UNKNOWN') | translate }}
         </span>
       </div>
 
       <div class="summary-grid">
         <div>
-          <span>Creada</span>
+          <span>{{ 'invoice.createdAt' | translate }}</span>
           <strong>{{ invoice()?.createdAt | date:'mediumDate' }}</strong>
         </div>
         <div>
-          <span>Emisión</span>
+          <span>{{ 'invoice.issueDate' | translate }}</span>
           <strong>{{ invoice()?.issueDate || '-' }}</strong>
         </div>
         <div>
-          <span>Vencimiento</span>
+          <span>{{ 'invoice.dueDate' | translate }}</span>
           <strong>{{ invoice()?.dueDate || '-' }}</strong>
         </div>
         <div>
-          <span>Cliente</span>
+          <span>{{ 'invoice.customer' | translate }}</span>
           <strong>{{ invoice()?.customer?.email || '-' }}</strong>
         </div>
       </div>
 
       <div class="totals-box">
         <div>
-          <span>Subtotal</span>
+          <span>{{ 'app.subtotal' | translate }}</span>
           <strong>{{ invoice()?.subtotal || 0 | currency:'EUR':'symbol':'1.2-2' }}</strong>
         </div>
         <div>
-          <span>Impuestos</span>
+          <span>{{ 'invoice.taxes' | translate }}</span>
           <strong>{{ invoice()?.taxAmount || 0 | currency:'EUR':'symbol':'1.2-2' }}</strong>
         </div>
         <div class="grand-total">
-          <span>Total</span>
+          <span>{{ 'app.total' | translate }}</span>
           <strong>{{ invoice()?.total || 0 | currency:'EUR':'symbol':'1.2-2' }}</strong>
         </div>
       </div>
@@ -76,14 +76,14 @@
     <article class="panel payment-panel">
       <div class="panel-header">
         <div>
-          <h2>Registrar pago</h2>
-          <p>Saldo pendiente: {{ remainingAmount() | currency:'EUR':'symbol':'1.2-2' }}</p>
+          <h2>{{ 'invoice.registerPayment' | translate }}</h2>
+          <p>{{ 'invoice.balanceDue' | translate }}: {{ remainingAmount() | currency:'EUR':'symbol':'1.2-2' }}</p>
         </div>
       </div>
 
       <div class="row g-3">
         <div class="col-12">
-          <label class="form-label">Monto</label>
+          <label class="form-label">{{ 'invoice.amount' | translate }}</label>
           <input
             class="form-control"
             type="number"
@@ -94,16 +94,16 @@
           />
         </div>
         <div class="col-12">
-          <label class="form-label">Método</label>
+          <label class="form-label">{{ 'invoice.method' | translate }}</label>
           <select class="form-select" [ngModel]="paymentMethod()" (ngModelChange)="paymentMethod.set($event)">
-            <option value="CASH">Efectivo</option>
-            <option value="TRANSFER">Transferencia</option>
-            <option value="CARD">Tarjeta</option>
+            <option value="CASH">{{ 'invoice.cash' | translate }}</option>
+            <option value="TRANSFER">{{ 'invoice.transfer' | translate }}</option>
+            <option value="CARD">{{ 'invoice.card' | translate }}</option>
           </select>
         </div>
         <div class="col-12">
           <button class="btn btn-primary w-100" type="button" (click)="addPayment()" [disabled]="savingPayment()">
-            {{ savingPayment() ? 'Registrando...' : 'Registrar pago' }}
+            {{ savingPayment() ? ('invoice.registering' | translate) : ('invoice.registerPayment' | translate) }}
           </button>
         </div>
       </div>
@@ -114,8 +114,8 @@
     <article class="panel">
       <div class="panel-header">
         <div>
-          <h2>Items</h2>
-          <p>Productos facturados</p>
+          <h2>{{ 'invoice.items' | translate }}</h2>
+          <p>{{ 'invoice.itemsHint' | translate }}</p>
         </div>
       </div>
 
@@ -123,10 +123,10 @@
         <table class="table align-middle mb-0">
           <thead>
             <tr>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Precio</th>
-              <th>Total</th>
+              <th>{{ 'invoice.product' | translate }}</th>
+              <th>{{ 'invoice.quantity' | translate }}</th>
+              <th>{{ 'app.price' | translate }}</th>
+              <th>{{ 'app.total' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -146,8 +146,8 @@
     <article class="panel">
       <div class="panel-header">
         <div>
-          <h2>Pagos</h2>
-          <p>{{ payments().length }} pagos registrados</p>
+          <h2>{{ 'invoice.payments' | translate }}</h2>
+          <p>{{ payments().length }} {{ 'invoice.paymentCount' | translate }}</p>
         </div>
       </div>
 
@@ -164,7 +164,7 @@
           }
         </div>
       } @else {
-        <div class="state-box">No hay pagos registrados.</div>
+        <div class="state-box">{{ 'invoice.noPayments' | translate }}</div>
       }
     </article>
   </section>

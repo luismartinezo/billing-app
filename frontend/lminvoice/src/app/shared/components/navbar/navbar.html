@@ -1,22 +1,31 @@
 <header class="topbar">
   <div class="topbar-left">
     <button class="btn btn-light menu-button" type="button" (click)="toggleSidebar.emit()">
-      {{ collapsed() ? 'Abrir' : 'Cerrar' }}
+      {{ collapsed() ? ('app.open' | translate) : ('app.close' | translate) }}
     </button>
     <div class="page-context">
-      <span>Panel de facturación</span>
-      <strong>Operaciones</strong>
+      <span>{{ 'app.billingPanel' | translate }}</span>
+      <strong>{{ 'app.operations' | translate }}</strong>
     </div>
   </div>
 
   <div class="topbar-right">
+    <div class="language-switch" aria-label="Language selector">
+      <button class="btn btn-sm" type="button" [class.btn-primary]="language() === 'es'" [class.btn-light]="language() !== 'es'" (click)="setLanguage('es')">
+        ES
+      </button>
+      <button class="btn btn-sm" type="button" [class.btn-primary]="language() === 'en'" [class.btn-light]="language() !== 'en'" (click)="setLanguage('en')">
+        EN
+      </button>
+    </div>
+
     @if (user) {
       <div class="user-pill">
         <span>{{ user.name }} {{ user.lastname }}</span>
       </div>
     }
     <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logoutRequested.emit()">
-      Salir
+      {{ 'app.logout' | translate }}
     </button>
   </div>
 </header>

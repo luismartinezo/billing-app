@@ -3,36 +3,36 @@
     <span class="eyebrow">LMInvoice</span>
     <h1>Dashboard</h1>
     @if (user()) {
-      <p>Bienvenido, {{ user()?.name }} {{ user()?.lastname }}</p>
+      <p>{{ 'dashboard.welcome' | translate }}, {{ user()?.name }} {{ user()?.lastname }}</p>
     }
   </div>
 
-  <a class="btn btn-primary" routerLink="/invoices/new">Nueva factura</a>
+  <a class="btn btn-primary" routerLink="/invoices/new">{{ 'invoice.new' | translate }}</a>
 </section>
 
 <section class="metrics-grid">
   <article class="metric-card">
-    <span>Total facturas</span>
+    <span>{{ 'dashboard.totalInvoices' | translate }}</span>
     <strong>{{ totalInvoices() }}</strong>
-    <small>Registradas en el sistema</small>
+    <small>{{ 'dashboard.registered' | translate }}</small>
   </article>
 
   <article class="metric-card accent-warning">
-    <span>Pendientes</span>
+    <span>{{ 'dashboard.pending' | translate }}</span>
     <strong>{{ pendingInvoices() }}</strong>
-    <small>Por cobrar o gestionar</small>
+    <small>{{ 'dashboard.pendingHint' | translate }}</small>
   </article>
 
   <article class="metric-card accent-success">
-    <span>Pagadas</span>
+    <span>{{ 'dashboard.paid' | translate }}</span>
     <strong>{{ paidInvoices() }}</strong>
-    <small>Facturas cerradas</small>
+    <small>{{ 'dashboard.paidHint' | translate }}</small>
   </article>
 
   <article class="metric-card accent-info">
-    <span>Ingresos pagados</span>
+    <span>{{ 'dashboard.paidRevenue' | translate }}</span>
     <strong>{{ totalRevenue() | currency:'EUR':'symbol':'1.2-2' }}</strong>
-    <small>Según facturas pagadas</small>
+    <small>{{ 'dashboard.paidRevenueHint' | translate }}</small>
   </article>
 </section>
 
@@ -40,32 +40,32 @@
   <article class="panel">
     <div class="panel-header">
       <div>
-        <h2>Últimas facturas</h2>
-        <p>Actividad reciente</p>
+        <h2>{{ 'dashboard.recentInvoices' | translate }}</h2>
+        <p>{{ 'dashboard.recentActivity' | translate }}</p>
       </div>
-      <a routerLink="/invoices">Ver todas</a>
+      <a routerLink="/invoices">{{ 'dashboard.viewAll' | translate }}</a>
     </div>
 
     @if (loading()) {
-      <div class="loading-state">Cargando facturas...</div>
+      <div class="loading-state">{{ 'dashboard.loadingInvoices' | translate }}</div>
     } @else if (recentInvoices().length > 0) {
       <div class="table-responsive">
         <table class="table align-middle mb-0">
           <thead>
             <tr>
-              <th>Número</th>
-              <th>Cliente</th>
-              <th>Total</th>
-              <th>Estado</th>
+              <th>{{ 'invoice.number' | translate }}</th>
+              <th>{{ 'invoice.customer' | translate }}</th>
+              <th>{{ 'app.total' | translate }}</th>
+              <th>{{ 'invoice.status' | translate }}</th>
             </tr>
           </thead>
           <tbody>
             @for (invoice of recentInvoices(); track invoice.id) {
               <tr>
-                <td>{{ invoice.invoiceNumber || 'Sin número' }}</td>
-                <td>{{ invoice.customer?.name || 'Sin cliente' }}</td>
+                <td>{{ invoice.invoiceNumber || ('invoice.noNumber' | translate) }}</td>
+                <td>{{ invoice.customer?.name || ('invoice.noCustomer' | translate) }}</td>
                 <td>{{ invoice.total || 0 | currency:'EUR':'symbol':'1.2-2' }}</td>
-                <td><span class="status-badge">{{ invoice.status }}</span></td>
+                <td><span class="status-badge">{{ 'status.' + (invoice.status || 'UNKNOWN') | translate }}</span></td>
               </tr>
             }
           </tbody>
@@ -73,9 +73,9 @@
       </div>
     } @else {
       <div class="empty-state">
-        <strong>No hay facturas todavía</strong>
-        <p>Crea la primera factura para activar las métricas.</p>
-        <a class="btn btn-sm btn-primary" routerLink="/invoices/new">Crear factura</a>
+        <strong>{{ 'dashboard.noInvoices' | translate }}</strong>
+        <p>{{ 'dashboard.createFirstInvoice' | translate }}</p>
+        <a class="btn btn-sm btn-primary" routerLink="/invoices/new">{{ 'dashboard.createInvoice' | translate }}</a>
       </div>
     }
   </article>
@@ -84,15 +84,15 @@
     <div class="panel-header">
       <div>
         <h2>Invoice Agent</h2>
-        <p>Consultas locales del negocio</p>
+        <p>{{ 'dashboard.agentSubtitle' | translate }}</p>
       </div>
     </div>
 
     <div class="quick-actions">
-      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('pending invoices')">Pendientes</button>
-      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('paid invoices')">Pagadas</button>
-      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('monthly revenue')">Ingresos</button>
-      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('top clients')">Top clientes</button>
+      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('pending invoices')">{{ 'dashboard.quickPending' | translate }}</button>
+      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('paid invoices')">{{ 'dashboard.quickPaid' | translate }}</button>
+      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('monthly revenue')">{{ 'dashboard.quickRevenue' | translate }}</button>
+      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('top clients')">{{ 'dashboard.quickTopClients' | translate }}</button>
     </div>
 
     <div class="input-group">
@@ -103,17 +103,17 @@
         (input)="agentQuestion.set($any($event.target).value)"
       />
       <button class="btn btn-primary" type="button" (click)="askAgent()" [disabled]="agentLoading()">
-        Preguntar
+        {{ 'dashboard.ask' | translate }}
       </button>
     </div>
 
     <div class="agent-answer">
       @if (agentLoading()) {
-        Consultando...
+        {{ 'dashboard.asking' | translate }}
       } @else if (agentAnswer()) {
         <pre>{{ agentAnswer() }}</pre>
       } @else {
-        <span>Selecciona una consulta rápida.</span>
+        <span>{{ 'dashboard.selectQuickQuery' | translate }}</span>
       }
     </div>
   </article>

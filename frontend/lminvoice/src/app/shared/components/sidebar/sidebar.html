@@ -4,7 +4,7 @@
     @if (!collapsed()) {
       <div>
         <strong>LMInvoice</strong>
-        <span>Billing System</span>
+        <span>{{ 'app.billingSystem' | translate }}</span>
       </div>
     }
   </div>
@@ -18,35 +18,35 @@
     >
       <span class="nav-icon">D</span>
       @if (!collapsed()) {
-        <span>Dashboard</span>
+        <span>{{ 'nav.dashboard' | translate }}</span>
       }
     </a>
 
     <a class="nav-link" routerLink="/invoices" routerLinkActive="active">
       <span class="nav-icon">F</span>
       @if (!collapsed()) {
-        <span>Facturas</span>
+        <span>{{ 'nav.invoices' | translate }}</span>
       }
     </a>
 
     <a class="nav-link" routerLink="/invoices/new" routerLinkActive="active">
       <span class="nav-icon">+</span>
       @if (!collapsed()) {
-        <span>Nueva factura</span>
+        <span>{{ 'nav.newInvoice' | translate }}</span>
       }
     </a>
 
     <a class="nav-link" routerLink="/customers" routerLinkActive="active">
       <span class="nav-icon">C</span>
       @if (!collapsed()) {
-        <span>Clientes</span>
+        <span>{{ 'nav.customers' | translate }}</span>
       }
     </a>
 
     <a class="nav-link" routerLink="/products" routerLinkActive="active">
       <span class="nav-icon">P</span>
       @if (!collapsed()) {
-        <span>Productos</span>
+        <span>{{ 'nav.products' | translate }}</span>
       }
     </a>
   </nav>

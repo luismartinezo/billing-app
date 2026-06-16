@@ -47,6 +47,16 @@
   font-weight: 600;
 }
 
+.language-switch {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.language-switch .btn {
+  min-width: 38px;
+  font-weight: 700;
+}
+
 @media (max-width: 700px) {
   .topbar {
     padding: 12px 16px;

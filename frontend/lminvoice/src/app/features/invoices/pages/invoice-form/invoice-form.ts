@@ -9,6 +9,8 @@ import { Product } from '../../../products/models/product';
 import { ProductService } from '../../../products/services/product.service';
 import { InvoiceService } from '../../services/invoiceService';
 import { CreateInvoice } from '../../models/invoice';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslationService } from '../../../../core/i18n/translation.service';
 
 interface InvoiceFormItem {
   productId: number | null;
@@ -18,7 +20,7 @@ interface InvoiceFormItem {
 
 @Component({
   selector: 'app-invoice-form',
-  imports: [FormsModule, RouterLink, CurrencyPipe],
+  imports: [FormsModule, RouterLink, CurrencyPipe, TranslatePipe],
   templateUrl: './invoice-form.html',
   styleUrl: './invoice-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -28,6 +30,7 @@ export class InvoiceForm {
   private customerService = inject(CustomerService);
   private productService = inject(ProductService);
   private router = inject(Router);
+  private translationService = inject(TranslationService);
 
   customerId = signal<number | null>(null);
   customers = signal<Customer[]>([]);
@@ -100,7 +103,7 @@ export class InvoiceForm {
     this.successMessage.set('');
 
     if (this.customerId() === null) {
-      this.errorMessage.set('Selecciona un cliente.');
+      this.errorMessage.set(this.translationService.translate('invoice.validationCustomer'));
       return;
     }
 
@@ -109,7 +112,7 @@ export class InvoiceForm {
     );
 
     if (hasInvalidItem) {
-      this.errorMessage.set('Selecciona productos y cantidades válidas.');
+      this.errorMessage.set(this.translationService.translate('invoice.validationItems'));
       return;
     }
 
@@ -125,7 +128,7 @@ export class InvoiceForm {
     this.invoiceService.create(payload).subscribe({
       next: (response) => {
         console.log('Factura creada:', response);
-        this.successMessage.set('Factura creada correctamente.');
+        this.successMessage.set(this.translationService.translate('invoice.created'));
         this.saving.set(false);
 
         this.customerId.set(null);
@@ -139,7 +142,7 @@ export class InvoiceForm {
       },
       error: (error) => {
         console.error('Error al crear factura:', error);
-        this.errorMessage.set('No se pudo guardar la factura.');
+        this.errorMessage.set(this.translationService.translate('invoice.saveError'));
         this.saving.set(false);
       }
     });
@@ -150,7 +153,8 @@ export class InvoiceForm {
   }
 
   productName(productId: number | null): string {
-    return this.products().find(product => product.id === productId)?.name ?? 'Producto sin seleccionar';
+    return this.products().find(product => product.id === productId)?.name
+      ?? this.translationService.translate('invoice.noSelectedProduct');
   }
 
   private loadCatalogs(): void {
@@ -165,7 +169,7 @@ export class InvoiceForm {
         this.loadingCatalogs.set(false);
       },
       error: () => {
-        this.errorMessage.set('No se pudieron cargar clientes y productos.');
+        this.errorMessage.set(this.translationService.translate('invoice.catalogsError'));
         this.loadingCatalogs.set(false);
       }
     });

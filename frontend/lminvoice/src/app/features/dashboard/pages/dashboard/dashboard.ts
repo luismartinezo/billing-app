@@ -7,10 +7,12 @@ import { User } from '../../../../core/models/user';
 import { InvoiceService } from '../../../invoices/services/invoiceService';
 import { Invoice } from '../../../invoices/models/invoice';
 import { InvoiceAgentService } from '../../../agent/services/invoice-agent.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslationService } from '../../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, CurrencyPipe],
+  imports: [RouterLink, CurrencyPipe, TranslatePipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -20,6 +22,7 @@ export class Dashboard {
   private invoiceService = inject(InvoiceService);
   private invoiceAgentService = inject(InvoiceAgentService);
   private router = inject(Router);
+  private translationService = inject(TranslationService);
 
   user = signal<User | null>(this.authService.getUser());
   invoices = signal<Invoice[]>([]);
@@ -62,7 +65,7 @@ export class Dashboard {
         this.agentLoading.set(false);
       },
       error: () => {
-        this.agentAnswer.set('No se pudo consultar el agente local.');
+        this.agentAnswer.set(this.translationService.translate('dashboard.agentError'));
         this.agentLoading.set(false);
       }
     });

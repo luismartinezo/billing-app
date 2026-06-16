@@ -2,10 +2,12 @@ import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/cor
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../../../core/services/auth';
+import { AppLanguage, TranslationService } from '../../../../core/i18n/translation.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -14,6 +16,7 @@ export class Login {
   private authService = inject(Auth);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private translationService = inject(TranslationService);
 
   loginForm = this.fb.group({
     username: ['', [Validators.required]],
@@ -22,6 +25,11 @@ export class Login {
 
   errorMessage = signal('');
   loading = signal(false);
+  language = this.translationService.language;
+
+  setLanguage(language: AppLanguage): void {
+    this.translationService.setLanguage(language);
+  }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
@@ -43,13 +51,13 @@ export class Login {
           },
           error: () => {
             this.loading.set(false);
-            this.errorMessage.set('The user session could not be obtained.');
+            this.errorMessage.set(this.translationService.translate('login.errorSession'));
           }
         });
       },
       error: () => {
         this.loading.set(false);
-        this.errorMessage.set('Invalid username or password.');
+        this.errorMessage.set(this.translationService.translate('login.errorCredentials'));
       }
     });
   }

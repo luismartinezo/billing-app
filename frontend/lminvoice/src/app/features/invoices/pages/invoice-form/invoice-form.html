@@ -1,11 +1,11 @@
 <section class="page-heading">
   <div>
-    <span class="eyebrow">Facturación</span>
-    <h1>Nueva factura</h1>
-    <p>Selecciona cliente, productos y cantidades para generar la factura.</p>
+    <span class="eyebrow">{{ 'invoice.section' | translate }}</span>
+    <h1>{{ 'invoice.formTitle' | translate }}</h1>
+    <p>{{ 'invoice.formDescription' | translate }}</p>
   </div>
 
-  <a class="btn btn-light" routerLink="/invoices">Volver a facturas</a>
+  <a class="btn btn-light" routerLink="/invoices">{{ 'invoice.backToInvoices' | translate }}</a>
 </section>
 
 @if (errorMessage()) {
@@ -15,7 +15,7 @@
 @if (successMessage()) {
   <div class="alert alert-success d-flex justify-content-between align-items-center">
     <span>{{ successMessage() }}</span>
-    <button class="btn btn-sm btn-outline-success" type="button" (click)="goToInvoices()">Ver facturas</button>
+    <button class="btn btn-sm btn-outline-success" type="button" (click)="goToInvoices()">{{ 'invoice.viewInvoices' | translate }}</button>
   </div>
 }
 
@@ -23,24 +23,24 @@
   <article class="panel">
     <div class="panel-header">
       <div>
-        <h2>Datos de la factura</h2>
-        <p>Cliente y líneas de producto</p>
+        <h2>{{ 'invoice.formData' | translate }}</h2>
+        <p>{{ 'invoice.formDataHint' | translate }}</p>
       </div>
     </div>
 
     @if (loadingCatalogs()) {
-      <div class="state-box">Cargando clientes y productos...</div>
+      <div class="state-box">{{ 'invoice.loadingCatalogs' | translate }}</div>
     } @else {
       <div class="row g-3 mb-4">
         <div class="col-12 col-lg-7">
-          <label class="form-label" for="customerId">Cliente</label>
+          <label class="form-label" for="customerId">{{ 'invoice.customer' | translate }}</label>
           <select
             id="customerId"
             class="form-select"
             [ngModel]="customerId()"
             (ngModelChange)="customerId.set($event === '' ? null : +$event)"
           >
-            <option value="">Selecciona un cliente</option>
+            <option value="">{{ 'invoice.selectCustomer' | translate }}</option>
             @for (customer of customers(); track customer.id) {
               <option [ngValue]="customer.id">{{ customer.name }} - {{ customer.email }}</option>
             }
@@ -52,28 +52,28 @@
             @if (selectedCustomer()) {
               <strong>{{ selectedCustomer()?.name }}</strong>
               <span>{{ selectedCustomer()?.email }}</span>
-              <small>{{ selectedCustomer()?.phone || 'Sin teléfono registrado' }}</small>
+              <small>{{ selectedCustomer()?.phone || ('invoice.noPhone' | translate) }}</small>
             } @else {
-              <strong>Sin cliente seleccionado</strong>
-              <span>Elige un cliente para continuar.</span>
+              <strong>{{ 'invoice.noSelectedCustomer' | translate }}</strong>
+              <span>{{ 'invoice.chooseCustomer' | translate }}</span>
             }
           </div>
         </div>
       </div>
 
       <div class="items-header">
-        <h3>Productos</h3>
-        <button class="btn btn-sm btn-outline-primary" type="button" (click)="addItem()">Agregar línea</button>
+        <h3>{{ 'invoice.products' | translate }}</h3>
+        <button class="btn btn-sm btn-outline-primary" type="button" (click)="addItem()">{{ 'invoice.addLine' | translate }}</button>
       </div>
 
       <div class="table-responsive">
         <table class="table align-middle items-table">
           <thead>
             <tr>
-              <th>Producto</th>
-              <th class="quantity-col">Cantidad</th>
-              <th class="price-col">Precio</th>
-              <th class="total-col">Total</th>
+              <th>{{ 'invoice.product' | translate }}</th>
+              <th class="quantity-col">{{ 'invoice.quantity' | translate }}</th>
+              <th class="price-col">{{ 'app.price' | translate }}</th>
+              <th class="total-col">{{ 'app.total' | translate }}</th>
               <th class="action-col"></th>
             </tr>
           </thead>
@@ -86,7 +86,7 @@
                     [ngModel]="item.productId"
                     (ngModelChange)="updateItemProductId(i, $event === '' ? null : +$event)"
                   >
-                    <option value="">Selecciona producto</option>
+                    <option value="">{{ 'invoice.selectProduct' | translate }}</option>
                     @for (product of products(); track product.id) {
                       <option [ngValue]="product.id">
                         {{ product.name }} - {{ product.price | currency:'EUR':'symbol':'1.2-2' }}
@@ -113,7 +113,7 @@
                     (click)="removeItem(i)"
                     [disabled]="items().length === 1"
                   >
-                    Eliminar
+                    {{ 'app.delete' | translate }}
                   </button>
                 </td>
               </tr>
@@ -126,19 +126,19 @@
 
   <aside class="summary-panel">
     <div class="summary-card">
-      <span class="eyebrow">Resumen</span>
-      <h2>Total factura</h2>
+      <span class="eyebrow">{{ 'invoice.summary' | translate }}</span>
+      <h2>{{ 'invoice.totalInvoice' | translate }}</h2>
 
       <div class="summary-row">
-        <span>Subtotal</span>
+        <span>{{ 'app.subtotal' | translate }}</span>
         <strong>{{ subtotal() | currency:'EUR':'symbol':'1.2-2' }}</strong>
       </div>
       <div class="summary-row">
-        <span>IVA 19%</span>
+        <span>{{ 'app.tax' | translate }}</span>
         <strong>{{ taxAmount() | currency:'EUR':'symbol':'1.2-2' }}</strong>
       </div>
       <div class="summary-row total">
-        <span>Total</span>
+        <span>{{ 'app.total' | translate }}</span>
         <strong>{{ total() | currency:'EUR':'symbol':'1.2-2' }}</strong>
       </div>
 
@@ -148,7 +148,7 @@
         (click)="submit()"
         [disabled]="saving() || loadingCatalogs()"
       >
-        {{ saving() ? 'Guardando...' : 'Guardar factura' }}
+        {{ saving() ? ('app.creating' | translate) : ('invoice.save' | translate) }}
       </button>
     </div>
   </aside>

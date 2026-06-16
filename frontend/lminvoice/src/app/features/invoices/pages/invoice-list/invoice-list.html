@@ -1,22 +1,22 @@
 <section class="page-heading">
   <div>
-    <span class="eyebrow">Facturación</span>
-    <h1>Facturas</h1>
-    <p>Control de estados, totales y actividad comercial.</p>
+    <span class="eyebrow">{{ 'invoice.section' | translate }}</span>
+    <h1>{{ 'invoice.title' | translate }}</h1>
+    <p>{{ 'invoice.description' | translate }}</p>
   </div>
 
-  <a class="btn btn-primary" routerLink="/invoices/new">Nueva factura</a>
+  <a class="btn btn-primary" routerLink="/invoices/new">{{ 'invoice.new' | translate }}</a>
 </section>
 
 <section class="panel">
   <div class="toolbar">
     <div class="search-box">
-      <label for="invoiceSearch">Buscar</label>
+      <label for="invoiceSearch">{{ 'app.search' | translate }}</label>
       <input
         id="invoiceSearch"
         class="form-control"
         type="search"
-        placeholder="Número, cliente o estado"
+        [placeholder]="'invoice.searchPlaceholder' | translate"
         [value]="searchTerm()"
         (input)="searchTerm.set($any($event.target).value)"
       />
@@ -31,43 +31,43 @@
           [class.btn-light]="selectedStatus() !== status"
           (click)="setStatus(status)"
         >
-          {{ status }}
+          {{ 'status.' + status | translate }}
         </button>
       }
     </div>
   </div>
 
   @if (loading()) {
-    <div class="state-box">Cargando facturas...</div>
+    <div class="state-box">{{ 'dashboard.loadingInvoices' | translate }}</div>
   } @else if (filteredInvoices().length > 0) {
     <div class="table-responsive">
       <table class="table align-middle invoice-table">
       <thead>
         <tr>
-          <th>Número</th>
-          <th>Cliente</th>
-          <th>Total</th>
-          <th>Estado</th>
-          <th class="text-end">Acciones</th>
+          <th>{{ 'invoice.number' | translate }}</th>
+          <th>{{ 'invoice.customer' | translate }}</th>
+          <th>{{ 'app.total' | translate }}</th>
+          <th>{{ 'invoice.status' | translate }}</th>
+          <th class="text-end">{{ 'app.actions' | translate }}</th>
         </tr>
       </thead>
       <tbody>
         @for (invoice of filteredInvoices(); track invoice.id) {
           <tr>
             <td>
-              <strong>{{ invoice.invoiceNumber || 'Sin número' }}</strong>
+              <strong>{{ invoice.invoiceNumber || ('invoice.noNumber' | translate) }}</strong>
               <span class="invoice-id">#{{ invoice.id }}</span>
             </td>
-            <td>{{ invoice.customer?.name || 'Sin cliente' }}</td>
+            <td>{{ invoice.customer?.name || ('invoice.noCustomer' | translate) }}</td>
             <td>{{ invoice.total || 0 | currency:'EUR':'symbol':'1.2-2' }}</td>
             <td>
               <span [class]="'status-badge ' + statusClass(invoice.status)">
-                {{ invoice.status || 'UNKNOWN' }}
+                {{ 'status.' + (invoice.status || 'UNKNOWN') | translate }}
               </span>
             </td>
             <td class="text-end">
-              <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/invoices', invoice.id]">Ver</a>
-              <a class="btn btn-sm btn-outline-primary ms-2" [routerLink]="['/invoices', invoice.id]">Pago</a>
+              <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/invoices', invoice.id]">{{ 'invoice.view' | translate }}</a>
+              <a class="btn btn-sm btn-outline-primary ms-2" [routerLink]="['/invoices', invoice.id]">{{ 'invoice.payment' | translate }}</a>
             </td>
           </tr>
         }
@@ -76,9 +76,9 @@
     </div>
   } @else {
     <div class="state-box empty">
-      <strong>No hay facturas para mostrar</strong>
-      <p>Ajusta los filtros o crea una nueva factura.</p>
-      <a class="btn btn-primary btn-sm" routerLink="/invoices/new">Crear factura</a>
+      <strong>{{ 'invoice.empty' | translate }}</strong>
+      <p>{{ 'invoice.emptyHint' | translate }}</p>
+      <a class="btn btn-primary btn-sm" routerLink="/invoices/new">{{ 'dashboard.createInvoice' | translate }}</a>
     </div>
   }
 </section>
