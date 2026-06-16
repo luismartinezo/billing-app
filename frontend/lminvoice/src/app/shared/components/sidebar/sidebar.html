@@ -49,5 +49,12 @@
         <span>{{ 'nav.products' | translate }}</span>
       }
     </a>
+
+    <a class="nav-link" routerLink="/reports" routerLinkActive="active">
+      <span class="nav-icon">R</span>
+      @if (!collapsed()) {
+        <span>{{ 'nav.reports' | translate }}</span>
+      }
+    </a>
   </nav>
 </aside>

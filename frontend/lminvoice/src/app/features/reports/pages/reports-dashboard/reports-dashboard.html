@@ -1,0 +1,114 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">{{ 'reports.section' | translate }}</span>
+    <h1>{{ 'reports.title' | translate }}</h1>
+    <p>{{ 'reports.description' | translate }}</p>
+  </div>
+
+  <a class="btn btn-primary" routerLink="/invoices/new">{{ 'invoice.new' | translate }}</a>
+</section>
+
+@if (errorMessage()) {
+  <div class="alert alert-danger">{{ errorMessage() }}</div>
+}
+
+@if (loading()) {
+  <div class="state-box">{{ 'reports.loading' | translate }}</div>
+} @else {
+  <section class="report-metrics">
+    <article class="metric-card">
+      <span>{{ 'reports.paidRevenue' | translate }}</span>
+      <strong>{{ totalRevenue() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+      <small>{{ paidInvoices().length }} {{ 'reports.paidInvoices' | translate }}</small>
+    </article>
+
+    <article class="metric-card accent-warning">
+      <span>{{ 'reports.pendingAmount' | translate }}</span>
+      <strong>{{ pendingAmount() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+      <small>{{ pendingInvoices().length }} {{ 'reports.pendingInvoices' | translate }}</small>
+    </article>
+
+    <article class="metric-card accent-info">
+      <span>{{ 'reports.averageInvoice' | translate }}</span>
+      <strong>{{ averageInvoice() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+      <small>{{ invoices().length }} {{ 'reports.totalInvoices' | translate }}</small>
+    </article>
+
+    <article class="metric-card accent-success">
+      <span>{{ 'reports.collectionRate' | translate }}</span>
+      <strong>{{ collectionRate() }}%</strong>
+      <small>{{ 'reports.collectionHint' | translate }}</small>
+    </article>
+  </section>
+
+  <section class="reports-grid">
+    <article class="panel revenue-panel">
+      <div class="panel-header">
+        <div>
+          <h2>{{ 'reports.monthlyRevenue' | translate }}</h2>
+          <p>{{ 'reports.lastSixMonths' | translate }}</p>
+        </div>
+      </div>
+
+      <div class="month-chart">
+        @for (month of monthlyRevenue(); track month.key) {
+          <div class="month-row">
+            <span class="month-label">{{ month.label }}</span>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width]="barWidth(month.total, highestMonthlyRevenue())"></div>
+            </div>
+            <strong>{{ month.total | currency:'EUR':'symbol':'1.0-0' }}</strong>
+          </div>
+        }
+      </div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>{{ 'reports.topClients' | translate }}</h2>
+          <p>{{ 'reports.topClientsHint' | translate }}</p>
+        </div>
+      </div>
+
+      @if (topClients().length > 0) {
+        <div class="client-list">
+          @for (client of topClients(); track client.name) {
+            <div class="client-row">
+              <div>
+                <strong>{{ client.name }}</strong>
+                <span>{{ client.invoices }} {{ 'reports.invoices' | translate }}</span>
+              </div>
+              <div class="client-value">
+                <strong>{{ client.total | currency:'EUR':'symbol':'1.2-2' }}</strong>
+                <div class="bar-track small">
+                  <div class="bar-fill success" [style.width]="barWidth(client.total, highestClientRevenue())"></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="state-box">{{ 'reports.noClientData' | translate }}</div>
+      }
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <h2>{{ 'reports.statusSummary' | translate }}</h2>
+        <p>{{ 'reports.statusSummaryHint' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="status-grid">
+      @for (status of ['PENDING', 'PAID', 'CANCELLED', 'ISSUED']; track status) {
+        <div class="status-card">
+          <span>{{ statusLabel(status) }}</span>
+          <strong>{{ statusCount(status) }}</strong>
+        </div>
+      }
+    </div>
+  </section>
+}

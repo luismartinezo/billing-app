@@ -1,13 +1,29 @@
 
 
 <div class="gray-bg">
+    <div class="login-language-switch" aria-label="Language selector">
+        <button
+            class="language-option"
+            type="button"
+            [class.active]="language() === 'es'"
+            [attr.aria-pressed]="language() === 'es'"
+            (click)="setLanguage('es')"
+        >
+            ES
+        </button>
+        <button
+            class="language-option"
+            type="button"
+            [class.active]="language() === 'en'"
+            [attr.aria-pressed]="language() === 'en'"
+            (click)="setLanguage('en')"
+        >
+            EN
+        </button>
+    </div>
 
     <div class="middle-box text-center loginscreen animated fadeInDown">
         <div>
-            <div class="language-switch mb-3">
-                <button class="btn btn-xs" type="button" [class.btn-primary]="language() === 'es'" [class.btn-white]="language() !== 'es'" (click)="setLanguage('es')">ES</button>
-                <button class="btn btn-xs" type="button" [class.btn-primary]="language() === 'en'" [class.btn-white]="language() !== 'en'" (click)="setLanguage('en')">EN</button>
-            </div>
             <div>
                 <h1 class="logo-name">LM</h1>
             </div>
