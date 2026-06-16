@@ -1,0 +1,15 @@
+<div class="app-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
+  <app-sidebar [collapsed]="sidebarCollapsed()" />
+
+  <div class="app-main">
+    <app-navbar
+      [collapsed]="sidebarCollapsed()"
+      (toggleSidebar)="toggleSidebar()"
+      (logoutRequested)="logout()"
+    />
+
+    <main class="app-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

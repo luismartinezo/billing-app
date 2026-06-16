@@ -1,0 +1,137 @@
+.page-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.page-heading h1 {
+  color: #243447;
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.page-heading p {
+  color: #6b7280;
+  margin: 4px 0 0;
+}
+
+.eyebrow {
+  color: #1ab394;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.search-box {
+  width: min(420px, 100%);
+}
+
+.search-box label {
+  color: #34495e;
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.status-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.invoice-table {
+  margin-bottom: 0;
+}
+
+.invoice-table thead th {
+  color: #6b7280;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.invoice-id {
+  display: block;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: #eef2f7;
+  color: #34495e;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.status-pending {
+  background: #fff4de;
+  color: #946200;
+}
+
+.status-paid {
+  background: #e6f8f3;
+  color: #08785f;
+}
+
+.status-cancelled {
+  background: #fdecec;
+  color: #b42318;
+}
+
+.status-issued {
+  background: #e8f3ff;
+  color: #175cd3;
+}
+
+.state-box {
+  border: 1px dashed #d7dde4;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 22px;
+}
+
+.state-box.empty {
+  text-align: center;
+}
+
+.state-box p {
+  color: #6b7280;
+  margin: 4px 0 14px;
+}
+
+@media (max-width: 760px) {
+  .page-heading,
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .status-filters {
+    justify-content: flex-start;
+  }
+}

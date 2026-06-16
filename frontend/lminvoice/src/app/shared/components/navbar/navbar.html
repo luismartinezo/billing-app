@@ -1,1 +1,22 @@
-<p>navbar works!</p>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="btn btn-light menu-button" type="button" (click)="toggleSidebar.emit()">
+      {{ collapsed() ? 'Abrir' : 'Cerrar' }}
+    </button>
+    <div class="page-context">
+      <span>Panel de facturación</span>
+      <strong>Operaciones</strong>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    @if (user) {
+      <div class="user-pill">
+        <span>{{ user.name }} {{ user.lastname }}</span>
+      </div>
+    }
+    <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logoutRequested.emit()">
+      Salir
+    </button>
+  </div>
+</header>

@@ -1,58 +1,155 @@
-<div class="container">
-  <h2>Nueva Factura</h2>
-
-  <div class="col">
-    <label for="customerId">Cliente ID</label>
-    <input
-    class="form-control" placeholder="Client Id"
-      id="customerId"
-      type="number"
-      [ngModel]="customerId()"
-      (ngModelChange)="customerId.set($event)"
-    />
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">Facturación</span>
+    <h1>Nueva factura</h1>
+    <p>Selecciona cliente, productos y cantidades para generar la factura.</p>
   </div>
 
-  <h3>Items</h3>
+  <a class="btn btn-light" routerLink="/invoices">Volver a facturas</a>
+</section>
 
-  @for (item of items(); let i = $index; track i) {
-    <div class="row">
-      <div class="col">
-      <input
-      class="form-control"
-        type="number"
-        [ngModel]="item.productId"
-        (ngModelChange)="updateItemProductId(i, $event)"
-        placeholder="Producto ID"
-      />
+@if (errorMessage()) {
+  <div class="alert alert-danger">{{ errorMessage() }}</div>
+}
+
+@if (successMessage()) {
+  <div class="alert alert-success d-flex justify-content-between align-items-center">
+    <span>{{ successMessage() }}</span>
+    <button class="btn btn-sm btn-outline-success" type="button" (click)="goToInvoices()">Ver facturas</button>
+  </div>
+}
+
+<section class="invoice-form-grid">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <h2>Datos de la factura</h2>
+        <p>Cliente y líneas de producto</p>
       </div>
-      <div class="col">
-      <input
-      class="form-control"
-        type="number"
-        [ngModel]="item.quantity"
-        (ngModelChange)="updateItemQuantity(i, $event)"
-        placeholder="Cantidad"
-      />
-      </div>
-      <div class="col">
-      <input
-      class="form-control"
-        type="number"
-        [ngModel]="item.price"
-        (ngModelChange)="updateItemPrice(i, $event)"
-        placeholder="Precio"
-      />
+    </div>
+
+    @if (loadingCatalogs()) {
+      <div class="state-box">Cargando clientes y productos...</div>
+    } @else {
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-7">
+          <label class="form-label" for="customerId">Cliente</label>
+          <select
+            id="customerId"
+            class="form-select"
+            [ngModel]="customerId()"
+            (ngModelChange)="customerId.set($event === '' ? null : +$event)"
+          >
+            <option value="">Selecciona un cliente</option>
+            @for (customer of customers(); track customer.id) {
+              <option [ngValue]="customer.id">{{ customer.name }} - {{ customer.email }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-12 col-lg-5">
+          <div class="customer-preview">
+            @if (selectedCustomer()) {
+              <strong>{{ selectedCustomer()?.name }}</strong>
+              <span>{{ selectedCustomer()?.email }}</span>
+              <small>{{ selectedCustomer()?.phone || 'Sin teléfono registrado' }}</small>
+            } @else {
+              <strong>Sin cliente seleccionado</strong>
+              <span>Elige un cliente para continuar.</span>
+            }
+          </div>
         </div>
       </div>
-      <br>
-      <button type="button" class="btn btn-danger" (click)="removeItem(i)">Eliminar</button>
 
-  }
+      <div class="items-header">
+        <h3>Productos</h3>
+        <button class="btn btn-sm btn-outline-primary" type="button" (click)="addItem()">Agregar línea</button>
+      </div>
 
-  <button type="button" class="btn btn-success" (click)="addItem()">Agregar item</button>
+      <div class="table-responsive">
+        <table class="table align-middle items-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th class="quantity-col">Cantidad</th>
+              <th class="price-col">Precio</th>
+              <th class="total-col">Total</th>
+              <th class="action-col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); let i = $index; track i) {
+              <tr>
+                <td>
+                  <select
+                    class="form-select"
+                    [ngModel]="item.productId"
+                    (ngModelChange)="updateItemProductId(i, $event === '' ? null : +$event)"
+                  >
+                    <option value="">Selecciona producto</option>
+                    @for (product of products(); track product.id) {
+                      <option [ngValue]="product.id">
+                        {{ product.name }} - {{ product.price | currency:'EUR':'symbol':'1.2-2' }}
+                      </option>
+                    }
+                  </select>
+                  <small>{{ productName(item.productId) }}</small>
+                </td>
+                <td>
+                  <input
+                    class="form-control"
+                    type="number"
+                    min="1"
+                    [ngModel]="item.quantity"
+                    (ngModelChange)="updateItemQuantity(i, $event)"
+                  />
+                </td>
+                <td>{{ item.price | currency:'EUR':'symbol':'1.2-2' }}</td>
+                <td>{{ item.quantity * item.price | currency:'EUR':'symbol':'1.2-2' }}</td>
+                <td class="text-end">
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    type="button"
+                    (click)="removeItem(i)"
+                    [disabled]="items().length === 1"
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </article>
 
-  <h3>Total calculado: {{ total() }}</h3>
+  <aside class="summary-panel">
+    <div class="summary-card">
+      <span class="eyebrow">Resumen</span>
+      <h2>Total factura</h2>
 
-  <button type="button" class="btn btn-primary" (click)="submit()">Guardar factura</button>
-</div>
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <strong>{{ subtotal() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+      </div>
+      <div class="summary-row">
+        <span>IVA 19%</span>
+        <strong>{{ taxAmount() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <strong>{{ total() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+      </div>
 
+      <button
+        class="btn btn-primary w-100"
+        type="button"
+        (click)="submit()"
+        [disabled]="saving() || loadingCatalogs()"
+      >
+        {{ saving() ? 'Guardando...' : 'Guardar factura' }}
+      </button>
+    </div>
+  </aside>
+</section>

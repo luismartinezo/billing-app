@@ -1,5 +1,12 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { Customer } from '../../../customers/models/customer';
+import { CustomerService } from '../../../customers/services/customer.service';
+import { Product } from '../../../products/models/product';
+import { ProductService } from '../../../products/services/product.service';
 import { InvoiceService } from '../../services/invoiceService';
 import { CreateInvoice } from '../../models/invoice';
 
@@ -11,15 +18,24 @@ interface InvoiceFormItem {
 
 @Component({
   selector: 'app-invoice-form',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink, CurrencyPipe],
   templateUrl: './invoice-form.html',
   styleUrl: './invoice-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceForm {
   private invoiceService = inject(InvoiceService);
+  private customerService = inject(CustomerService);
+  private productService = inject(ProductService);
+  private router = inject(Router);
 
   customerId = signal<number | null>(null);
+  customers = signal<Customer[]>([]);
+  products = signal<Product[]>([]);
+  loadingCatalogs = signal(true);
+  saving = signal(false);
+  successMessage = signal('');
+  errorMessage = signal('');
   items = signal<InvoiceFormItem[]>([
     {
       productId: null,
@@ -28,14 +44,30 @@ export class InvoiceForm {
     }
   ]);
 
-  total = computed(() => {
+  subtotal = computed(() => {
     return this.items().reduce((sum, item) => sum + (item.quantity * item.price), 0);
   });
+  taxAmount = computed(() => this.subtotal() * 0.19);
+  total = computed(() => this.subtotal() + this.taxAmount());
+  selectedCustomer = computed(() => {
+    return this.customers().find(customer => customer.id === this.customerId()) ?? null;
+  });
+
+  constructor() {
+    this.loadCatalogs();
+  }
 
   updateItemProductId(index: number, productId: number | null): void {
+    const selectedProductId = productId === null ? null : Number(productId);
+    const selectedProduct = this.products().find(product => product.id === selectedProductId);
+
     this.items.update(items => {
       const updated = [...items];
-      updated[index].productId = productId;
+      updated[index] = {
+        ...updated[index],
+        productId: selectedProductId,
+        price: selectedProduct?.price ?? 0
+      };
       return updated;
     });
   }
@@ -43,15 +75,10 @@ export class InvoiceForm {
   updateItemQuantity(index: number, quantity: number): void {
     this.items.update(items => {
       const updated = [...items];
-      updated[index].quantity = quantity;
-      return updated;
-    });
-  }
-
-  updateItemPrice(index: number, price: number): void {
-    this.items.update(items => {
-      const updated = [...items];
-      updated[index].price = price;
+      updated[index] = {
+        ...updated[index],
+        quantity: Number(quantity)
+      };
       return updated;
     });
   }
@@ -69,8 +96,11 @@ export class InvoiceForm {
   }
 
   submit(): void {
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
     if (this.customerId() === null) {
-      alert('Debe ingresar el cliente');
+      this.errorMessage.set('Selecciona un cliente.');
       return;
     }
 
@@ -79,7 +109,7 @@ export class InvoiceForm {
     );
 
     if (hasInvalidItem) {
-      alert('Verifique los productos y cantidades');
+      this.errorMessage.set('Selecciona productos y cantidades válidas.');
       return;
     }
 
@@ -91,10 +121,12 @@ export class InvoiceForm {
       }))
     };
 
+    this.saving.set(true);
     this.invoiceService.create(payload).subscribe({
       next: (response) => {
         console.log('Factura creada:', response);
-        alert('Factura creada correctamente');
+        this.successMessage.set('Factura creada correctamente.');
+        this.saving.set(false);
 
         this.customerId.set(null);
         this.items.set([
@@ -107,7 +139,34 @@ export class InvoiceForm {
       },
       error: (error) => {
         console.error('Error al crear factura:', error);
-        alert('Error al guardar la factura');
+        this.errorMessage.set('No se pudo guardar la factura.');
+        this.saving.set(false);
+      }
+    });
+  }
+
+  goToInvoices(): void {
+    this.router.navigate(['/invoices']);
+  }
+
+  productName(productId: number | null): string {
+    return this.products().find(product => product.id === productId)?.name ?? 'Producto sin seleccionar';
+  }
+
+  private loadCatalogs(): void {
+    this.loadingCatalogs.set(true);
+    forkJoin({
+      customers: this.customerService.getAll(),
+      products: this.productService.getAll()
+    }).subscribe({
+      next: ({ customers, products }) => {
+        this.customers.set(customers);
+        this.products.set(products);
+        this.loadingCatalogs.set(false);
+      },
+      error: () => {
+        this.errorMessage.set('No se pudieron cargar clientes y productos.');
+        this.loadingCatalogs.set(false);
       }
     });
   }

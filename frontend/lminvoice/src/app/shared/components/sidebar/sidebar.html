@@ -1,1 +1,53 @@
-<p>sidebar works!</p>
+<aside class="sidebar" [class.collapsed]="collapsed()">
+  <div class="brand">
+    <div class="brand-mark">LM</div>
+    @if (!collapsed()) {
+      <div>
+        <strong>LMInvoice</strong>
+        <span>Billing System</span>
+      </div>
+    }
+  </div>
+
+  <nav class="nav flex-column">
+    <a
+      class="nav-link"
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <span class="nav-icon">D</span>
+      @if (!collapsed()) {
+        <span>Dashboard</span>
+      }
+    </a>
+
+    <a class="nav-link" routerLink="/invoices" routerLinkActive="active">
+      <span class="nav-icon">F</span>
+      @if (!collapsed()) {
+        <span>Facturas</span>
+      }
+    </a>
+
+    <a class="nav-link" routerLink="/invoices/new" routerLinkActive="active">
+      <span class="nav-icon">+</span>
+      @if (!collapsed()) {
+        <span>Nueva factura</span>
+      }
+    </a>
+
+    <a class="nav-link" routerLink="/customers" routerLinkActive="active">
+      <span class="nav-icon">C</span>
+      @if (!collapsed()) {
+        <span>Clientes</span>
+      }
+    </a>
+
+    <a class="nav-link" routerLink="/products" routerLinkActive="active">
+      <span class="nav-icon">P</span>
+      @if (!collapsed()) {
+        <span>Productos</span>
+      }
+    </a>
+  </nav>
+</aside>

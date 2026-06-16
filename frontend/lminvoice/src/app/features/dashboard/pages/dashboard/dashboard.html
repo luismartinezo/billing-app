@@ -1,35 +1,120 @@
-<div class="dashboard-container">
-  <header class="dashboard-header">
-    <div>
-      <h1>Dashboard</h1>
-      @if (user()) {
-        <p>
-          Bienvenido, {{ user()?.name }} {{ user()?.lastname }}
-        </p>
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">LMInvoice</span>
+    <h1>Dashboard</h1>
+    @if (user()) {
+      <p>Bienvenido, {{ user()?.name }} {{ user()?.lastname }}</p>
+    }
+  </div>
+
+  <a class="btn btn-primary" routerLink="/invoices/new">Nueva factura</a>
+</section>
+
+<section class="metrics-grid">
+  <article class="metric-card">
+    <span>Total facturas</span>
+    <strong>{{ totalInvoices() }}</strong>
+    <small>Registradas en el sistema</small>
+  </article>
+
+  <article class="metric-card accent-warning">
+    <span>Pendientes</span>
+    <strong>{{ pendingInvoices() }}</strong>
+    <small>Por cobrar o gestionar</small>
+  </article>
+
+  <article class="metric-card accent-success">
+    <span>Pagadas</span>
+    <strong>{{ paidInvoices() }}</strong>
+    <small>Facturas cerradas</small>
+  </article>
+
+  <article class="metric-card accent-info">
+    <span>Ingresos pagados</span>
+    <strong>{{ totalRevenue() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+    <small>Según facturas pagadas</small>
+  </article>
+</section>
+
+<section class="dashboard-grid">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <h2>Últimas facturas</h2>
+        <p>Actividad reciente</p>
+      </div>
+      <a routerLink="/invoices">Ver todas</a>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-state">Cargando facturas...</div>
+    } @else if (recentInvoices().length > 0) {
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Cliente</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (invoice of recentInvoices(); track invoice.id) {
+              <tr>
+                <td>{{ invoice.invoiceNumber || 'Sin número' }}</td>
+                <td>{{ invoice.customer?.name || 'Sin cliente' }}</td>
+                <td>{{ invoice.total || 0 | currency:'EUR':'symbol':'1.2-2' }}</td>
+                <td><span class="status-badge">{{ invoice.status }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <strong>No hay facturas todavía</strong>
+        <p>Crea la primera factura para activar las métricas.</p>
+        <a class="btn btn-sm btn-primary" routerLink="/invoices/new">Crear factura</a>
+      </div>
+    }
+  </article>
+
+  <article class="panel agent-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Invoice Agent</h2>
+        <p>Consultas locales del negocio</p>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('pending invoices')">Pendientes</button>
+      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('paid invoices')">Pagadas</button>
+      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('monthly revenue')">Ingresos</button>
+      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('top clients')">Top clientes</button>
+    </div>
+
+    <div class="input-group">
+      <input
+        class="form-control"
+        type="text"
+        [value]="agentQuestion()"
+        (input)="agentQuestion.set($any($event.target).value)"
+      />
+      <button class="btn btn-primary" type="button" (click)="askAgent()" [disabled]="agentLoading()">
+        Preguntar
+      </button>
+    </div>
+
+    <div class="agent-answer">
+      @if (agentLoading()) {
+        Consultando...
+      } @else if (agentAnswer()) {
+        <pre>{{ agentAnswer() }}</pre>
+      } @else {
+        <span>Selecciona una consulta rápida.</span>
       }
     </div>
-
-    <button (click)="logout()">Cerrar sesión</button>
-  </header>
-
-  <section class="dashboard-cards">
-    <div class="card" routerLink="/invoices">
-      <h3>Facturas</h3>
-      <p>Gestiona tus facturas</p>
-    </div>
-
-    <div class="card" routerLink="/clients">
-      <h3>Clientes</h3>
-      <p>Administra tus clientes</p>
-    </div>
-
-    <div class="card" routerLink="/products">
-      <h3>Productos</h3>
-      <p>Controla tus productos</p>
-    </div>
-
-    <div class="card" routerLink="/invoices/new">
-      <h3>Nueva Factura</h3>
-    </div>
-  </section>
-</div>
+  </article>
+</section>

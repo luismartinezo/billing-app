@@ -1,34 +1,84 @@
-<div>
-  <h2>Facturas</h2>
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">Facturación</span>
+    <h1>Facturas</h1>
+    <p>Control de estados, totales y actividad comercial.</p>
+  </div>
+
+  <a class="btn btn-primary" routerLink="/invoices/new">Nueva factura</a>
+</section>
+
+<section class="panel">
+  <div class="toolbar">
+    <div class="search-box">
+      <label for="invoiceSearch">Buscar</label>
+      <input
+        id="invoiceSearch"
+        class="form-control"
+        type="search"
+        placeholder="Número, cliente o estado"
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+      />
+    </div>
+
+    <div class="status-filters">
+      @for (status of ['ALL', 'PENDING', 'PAID', 'CANCELLED', 'ISSUED']; track status) {
+        <button
+          class="btn btn-sm"
+          type="button"
+          [class.btn-primary]="selectedStatus() === status"
+          [class.btn-light]="selectedStatus() !== status"
+          (click)="setStatus(status)"
+        >
+          {{ status }}
+        </button>
+      }
+    </div>
+  </div>
 
   @if (loading()) {
-    <p>Cargando...</p>
-  }
-
-  @if (!loading() && invoices().length > 0) {
-    <table>
+    <div class="state-box">Cargando facturas...</div>
+  } @else if (filteredInvoices().length > 0) {
+    <div class="table-responsive">
+      <table class="table align-middle invoice-table">
       <thead>
         <tr>
           <th>Número</th>
           <th>Cliente</th>
           <th>Total</th>
           <th>Estado</th>
+          <th class="text-end">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        @for (invoice of invoices(); track invoice.id) {
+        @for (invoice of filteredInvoices(); track invoice.id) {
           <tr>
-            <td>{{ invoice.invoiceNumber }}</td>
-            <td>{{ invoice.customer?.name }}</td>
-            <td>{{ invoice.total }}</td>
-            <td>{{ invoice.status }}</td>
+            <td>
+              <strong>{{ invoice.invoiceNumber || 'Sin número' }}</strong>
+              <span class="invoice-id">#{{ invoice.id }}</span>
+            </td>
+            <td>{{ invoice.customer?.name || 'Sin cliente' }}</td>
+            <td>{{ invoice.total || 0 | currency:'EUR':'symbol':'1.2-2' }}</td>
+            <td>
+              <span [class]="'status-badge ' + statusClass(invoice.status)">
+                {{ invoice.status || 'UNKNOWN' }}
+              </span>
+            </td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/invoices', invoice.id]">Ver</a>
+              <a class="btn btn-sm btn-outline-primary ms-2" [routerLink]="['/invoices', invoice.id]">Pago</a>
+            </td>
           </tr>
         }
       </tbody>
     </table>
+    </div>
+  } @else {
+    <div class="state-box empty">
+      <strong>No hay facturas para mostrar</strong>
+      <p>Ajusta los filtros o crea una nueva factura.</p>
+      <a class="btn btn-primary btn-sm" routerLink="/invoices/new">Crear factura</a>
+    </div>
   }
-
-  @if (!loading() && invoices().length === 0) {
-    <p>No hay facturas.</p>
-  }
-</div>
+</section>

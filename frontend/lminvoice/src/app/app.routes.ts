@@ -10,31 +10,55 @@ export const routes: Routes = [
       )
   },
   {
-    path: 'dashboard',
+    path: '',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/dashboard/pages/dashboard/dashboard').then(
-        m => m.Dashboard
-      )
-  },
-  {
-  path: 'invoices',
-  canActivate: [authGuard],
-  loadComponent: () =>
-    import('./features/invoices/pages/invoice-list/invoice-list').then(
-      m => m.InvoiceList
-    )
-},
-{
-  path: 'invoices/new',
-  loadComponent: () =>
-    import('./features/invoices/pages/invoice-form/invoice-form')
-      .then(m => m.InvoiceForm)
-},
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
+      import('./layouts/app-shell/app-shell').then(m => m.AppShell),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/dashboard/pages/dashboard/dashboard').then(
+            m => m.Dashboard
+          )
+      },
+      {
+        path: 'invoices',
+        loadComponent: () =>
+          import('./features/invoices/pages/invoice-list/invoice-list').then(
+            m => m.InvoiceList
+          )
+      },
+      {
+        path: 'invoices/new',
+        loadComponent: () =>
+          import('./features/invoices/pages/invoice-form/invoice-form')
+            .then(m => m.InvoiceForm)
+      },
+      {
+        path: 'invoices/:id',
+        loadComponent: () =>
+          import('./features/invoices/pages/invoice-detail/invoice-detail')
+            .then(m => m.InvoiceDetail)
+      },
+      {
+        path: 'customers',
+        loadComponent: () =>
+          import('./features/customers/pages/customer-list/customer-list')
+            .then(m => m.CustomerList)
+      },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./features/products/pages/product-list/product-list')
+            .then(m => m.ProductList)
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: '**',
