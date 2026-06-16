@@ -4,9 +4,11 @@ import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.AuthU
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.dtos.UserDTO;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Role;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.User;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.BusinessException;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.mappers.UserMapper;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.RoleRepository;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -53,7 +55,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody User user){
+    public ResponseEntity<UserDTO> register(@Valid @RequestBody User user){
+
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new BusinessException("Username is already registered");
+        }
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new BusinessException("Email is already registered");
+        }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 

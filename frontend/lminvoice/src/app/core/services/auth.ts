@@ -5,6 +5,7 @@ import { LoginRequest } from '../models/login-request';
 import { AuthResponse } from '../models/auth-response';
 import { Observable, tap } from 'rxjs';
 import { User } from '../models/user';
+import { RegisterRequest } from '../models/register-request';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,10 @@ export class Auth {
 
   getMe(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/auth/me`);
+  }
+
+  register(payload: RegisterRequest): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/auth/register`, payload);
   }
 
   saveUser(user: User): void {
@@ -53,5 +58,10 @@ export class Auth {
   hasRole(role: string): boolean {
     const user = this.getUser();
     return !!user?.roles?.includes(role);
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    const user = this.getUser();
+    return roles.some(role => user?.roles?.includes(role));
   }
 }

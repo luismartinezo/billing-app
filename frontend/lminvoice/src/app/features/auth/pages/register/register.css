@@ -1,0 +1,158 @@
+.gray-bg {
+  background-color: #f3f3f4;
+  min-height: 100vh;
+  position: relative;
+}
+
+.auth-language-switch {
+  display: inline-flex;
+  gap: 4px;
+  position: absolute;
+  right: clamp(12px, 3vw, 28px);
+  top: clamp(12px, 3vw, 24px);
+  z-index: 110;
+}
+
+.auth-language-switch .language-option {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d7dde4;
+  border-radius: 6px;
+  color: #34495e;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  height: 28px;
+  justify-content: center;
+  letter-spacing: 0;
+  line-height: 1;
+  min-width: 34px;
+  padding: 0 8px;
+  width: auto;
+}
+
+.auth-language-switch .language-option.active {
+  background: #1ab394;
+  border-color: #1ab394;
+  color: #fff;
+}
+
+.register-box {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 34px 20px 24px;
+  z-index: 100;
+}
+
+.logo-name {
+  color: #e6e6e6;
+  font-size: 140px;
+  font-weight: 800;
+  letter-spacing: -8px;
+  line-height: 0.9;
+  margin-bottom: 8px;
+}
+
+.register-box h3 {
+  color: #243447;
+  font-weight: 700;
+}
+
+.register-box p {
+  color: #6b7280;
+}
+
+.m-t {
+  margin-top: 15px;
+}
+
+.register-form {
+  text-align: left;
+}
+
+.form-row {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.form-group input {
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.form-group small {
+  color: #7b8794;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.85rem;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.alert-message {
+  border-radius: 8px;
+  font-size: 14px;
+  margin: 14px 0;
+  padding: 10px 12px;
+}
+
+.alert-message.error {
+  background: #fdecec;
+  color: #b42318;
+}
+
+.alert-message.success {
+  background: #e6f8f3;
+  color: #08785f;
+}
+
+.role-note {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 12px;
+  margin: 18px 0 0;
+  padding: 10px 12px;
+}
+
+.text-muted {
+  color: #888888 !important;
+}
+
+@media (max-width: 520px) {
+  .register-box {
+    padding-top: 58px;
+  }
+
+  .logo-name {
+    font-size: 110px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

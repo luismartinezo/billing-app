@@ -1,0 +1,79 @@
+<div class="gray-bg">
+  <div class="auth-language-switch" aria-label="Language selector">
+    <button
+      class="language-option"
+      type="button"
+      [class.active]="language() === 'es'"
+      [attr.aria-pressed]="language() === 'es'"
+      (click)="setLanguage('es')"
+    >
+      ES
+    </button>
+    <button
+      class="language-option"
+      type="button"
+      [class.active]="language() === 'en'"
+      [attr.aria-pressed]="language() === 'en'"
+      (click)="setLanguage('en')"
+    >
+      EN
+    </button>
+  </div>
+
+  <div class="register-box text-center animated fadeInDown">
+    <div>
+      <h1 class="logo-name">LM</h1>
+      <h3>{{ 'register.title' | translate }}</h3>
+      <p>{{ 'register.subtitle' | translate }}</p>
+
+      @if (errorMessage()) {
+        <p class="alert-message error">{{ errorMessage() }}</p>
+      }
+
+      @if (successMessage()) {
+        <p class="alert-message success">{{ successMessage() }}</p>
+      }
+
+      <form class="m-t register-form" role="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group">
+            <input class="form-control" type="text" [placeholder]="'customer.firstName' | translate" formControlName="name" />
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="text" [placeholder]="'customer.lastName' | translate" formControlName="lastname" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <input class="form-control" type="email" [placeholder]="'app.email' | translate" formControlName="email" />
+        </div>
+
+        <div class="form-group">
+          <input class="form-control" type="text" [placeholder]="'login.username' | translate" formControlName="username" />
+          <small>{{ 'register.usernameHint' | translate }}</small>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <input class="form-control" type="password" [placeholder]="'login.password' | translate" formControlName="password" />
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="password" [placeholder]="'register.confirmPassword' | translate" formControlName="confirmPassword" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary block full-width m-b" [disabled]="loading()">
+          {{ loading() ? ('register.creating' | translate) : ('register.submit' | translate) }}
+        </button>
+      </form>
+
+      <p class="text-muted text-center">
+        <small>{{ 'register.hasAccount' | translate }}</small>
+      </p>
+      <a class="btn btn-sm btn-white btn-block" routerLink="/login">{{ 'register.backToLogin' | translate }}</a>
+
+      <p class="role-note">{{ 'register.roleNote' | translate }}</p>
+      <p class="m-t"><small>Luis Martinez &copy; 2026</small></p>
+    </div>
+  </div>
+</div>

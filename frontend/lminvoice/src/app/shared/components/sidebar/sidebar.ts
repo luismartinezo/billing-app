@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { Auth } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,5 +11,8 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Sidebar {
+  private authService = inject(Auth);
+
   collapsed = input(false);
+  isAdmin = this.authService.hasRole('ROLE_ADMIN');
 }
