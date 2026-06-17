@@ -15,44 +15,46 @@
 }
 
 <section class="catalog-grid">
-  <article class="panel">
-    <div class="panel-header">
-      <div>
-        <h2>{{ editingId() ? ('product.edit' | translate) : ('product.new' | translate) }}</h2>
-        <p>{{ 'product.formHint' | translate }}</p>
-      </div>
-    </div>
-
-    <form (ngSubmit)="submit()" class="catalog-form">
-      <div class="row g-3">
-        <div class="col-12">
-          <label class="form-label">{{ 'app.name' | translate }}</label>
-          <input class="form-control" [ngModel]="form().name" name="name" (ngModelChange)="updateTextField('name', $event)" />
-        </div>
-        <div class="col-12">
-          <label class="form-label">{{ 'app.description' | translate }}</label>
-          <textarea class="form-control" rows="3" [ngModel]="form().description" name="description" (ngModelChange)="updateTextField('description', $event)"></textarea>
-        </div>
-        <div class="col-12 col-md-6">
-          <label class="form-label">{{ 'app.price' | translate }}</label>
-          <input class="form-control" type="number" min="0.01" step="0.01" [ngModel]="form().price" name="price" (ngModelChange)="updateNumberField('price', $event)" />
-        </div>
-        <div class="col-12 col-md-6">
-          <label class="form-label">{{ 'app.stock' | translate }}</label>
-          <input class="form-control" type="number" min="1" [ngModel]="form().stock" name="stock" (ngModelChange)="updateNumberField('stock', $event)" />
+  @if (isAdmin) {
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>{{ editingId() ? ('product.edit' | translate) : ('product.new' | translate) }}</h2>
+          <p>{{ 'product.formHint' | translate }}</p>
         </div>
       </div>
 
-      <div class="form-actions">
-        <button class="btn btn-primary" type="submit" [disabled]="saving()">
-          {{ saving() ? ('app.creating' | translate) : editingId() ? ('app.update' | translate) : ('product.create' | translate) }}
-        </button>
-        @if (editingId()) {
-          <button class="btn btn-light" type="button" (click)="resetForm()">{{ 'app.cancel' | translate }}</button>
-        }
-      </div>
-    </form>
-  </article>
+      <form (ngSubmit)="submit()" class="catalog-form">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">{{ 'app.name' | translate }}</label>
+            <input class="form-control" [ngModel]="form().name" name="name" (ngModelChange)="updateTextField('name', $event)" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'app.description' | translate }}</label>
+            <textarea class="form-control" rows="3" [ngModel]="form().description" name="description" (ngModelChange)="updateTextField('description', $event)"></textarea>
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ 'app.price' | translate }}</label>
+            <input class="form-control" type="number" min="0.01" step="0.01" [ngModel]="form().price" name="price" (ngModelChange)="updateNumberField('price', $event)" />
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ 'app.stock' | translate }}</label>
+            <input class="form-control" type="number" min="1" [ngModel]="form().stock" name="stock" (ngModelChange)="updateNumberField('stock', $event)" />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="saving()">
+            {{ saving() ? ('app.creating' | translate) : editingId() ? ('app.update' | translate) : ('product.create' | translate) }}
+          </button>
+          @if (editingId()) {
+            <button class="btn btn-light" type="button" (click)="resetForm()">{{ 'app.cancel' | translate }}</button>
+          }
+        </div>
+      </form>
+    </article>
+  }
 
   <article class="panel">
     <div class="panel-header">
@@ -80,7 +82,9 @@
               <th>{{ 'invoice.product' | translate }}</th>
               <th>{{ 'app.price' | translate }}</th>
               <th>{{ 'app.stock' | translate }}</th>
-              <th class="text-end">{{ 'app.actions' | translate }}</th>
+              @if (isAdmin) {
+                <th class="text-end">{{ 'app.actions' | translate }}</th>
+              }
             </tr>
           </thead>
           <tbody>
@@ -92,10 +96,12 @@
                 </td>
                 <td>{{ product.price | currency:'EUR':'symbol':'1.2-2' }}</td>
                 <td><span class="stock-badge">{{ product.stock }}</span></td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-secondary" type="button" (click)="edit(product)">{{ 'app.edit' | translate }}</button>
-                  <button class="btn btn-sm btn-outline-danger ms-2" type="button" (click)="remove(product)">{{ 'app.delete' | translate }}</button>
-                </td>
+                @if (isAdmin) {
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="edit(product)">{{ 'app.edit' | translate }}</button>
+                    <button class="btn btn-sm btn-outline-danger ms-2" type="button" (click)="remove(product)">{{ 'app.delete' | translate }}</button>
+                  </td>
+                }
               </tr>
             }
           </tbody>

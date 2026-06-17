@@ -36,23 +36,19 @@
       }
     </a>
 
-    @if (isAdmin) {
-      <a class="nav-link" routerLink="/customers" routerLinkActive="active">
-        <span class="nav-icon">C</span>
-        @if (!collapsed()) {
-          <span>{{ 'nav.customers' | translate }}</span>
-        }
-      </a>
-    }
+    <a class="nav-link" routerLink="/customers" routerLinkActive="active">
+      <span class="nav-icon">C</span>
+      @if (!collapsed()) {
+        <span>{{ 'nav.customers' | translate }}</span>
+      }
+    </a>
 
-    @if (isAdmin) {
-      <a class="nav-link" routerLink="/products" routerLinkActive="active">
-        <span class="nav-icon">P</span>
-        @if (!collapsed()) {
-          <span>{{ 'nav.products' | translate }}</span>
-        }
-      </a>
-    }
+    <a class="nav-link" routerLink="/products" routerLinkActive="active">
+      <span class="nav-icon">P</span>
+      @if (!collapsed()) {
+        <span>{{ 'nav.products' | translate }}</span>
+      }
+    </a>
 
     @if (isAdmin) {
       <a class="nav-link" routerLink="/reports" routerLinkActive="active">

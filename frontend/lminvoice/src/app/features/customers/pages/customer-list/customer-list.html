@@ -15,48 +15,50 @@
 }
 
 <section class="catalog-grid">
-  <article class="panel">
-    <div class="panel-header">
-      <div>
-        <h2>{{ editingId() ? ('customer.edit' | translate) : ('customer.new' | translate) }}</h2>
-        <p>{{ 'customer.formHint' | translate }}</p>
-      </div>
-    </div>
-
-    <form (ngSubmit)="submit()" class="catalog-form">
-      <div class="row g-3">
-        <div class="col-12 col-md-6">
-          <label class="form-label">{{ 'customer.firstName' | translate }}</label>
-          <input class="form-control" [ngModel]="form().firstName" name="firstName" (ngModelChange)="updateField('firstName', $event)" />
-        </div>
-        <div class="col-12 col-md-6">
-          <label class="form-label">{{ 'customer.lastName' | translate }}</label>
-          <input class="form-control" [ngModel]="form().lastName" name="lastName" (ngModelChange)="updateField('lastName', $event)" />
-        </div>
-        <div class="col-12">
-          <label class="form-label">{{ 'app.email' | translate }}</label>
-          <input class="form-control" type="email" [ngModel]="form().email" name="email" (ngModelChange)="updateField('email', $event)" />
-        </div>
-        <div class="col-12">
-          <label class="form-label">{{ 'customer.address' | translate }}</label>
-          <input class="form-control" [ngModel]="form().address" name="address" (ngModelChange)="updateField('address', $event)" />
-        </div>
-        <div class="col-12">
-          <label class="form-label">{{ 'app.phone' | translate }}</label>
-          <input class="form-control" [ngModel]="form().phone" name="phone" (ngModelChange)="updateField('phone', $event)" />
+  @if (isAdmin) {
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>{{ editingId() ? ('customer.edit' | translate) : ('customer.new' | translate) }}</h2>
+          <p>{{ 'customer.formHint' | translate }}</p>
         </div>
       </div>
 
-      <div class="form-actions">
-        <button class="btn btn-primary" type="submit" [disabled]="saving()">
-          {{ saving() ? ('app.creating' | translate) : editingId() ? ('app.update' | translate) : ('customer.create' | translate) }}
-        </button>
-        @if (editingId()) {
-          <button class="btn btn-light" type="button" (click)="resetForm()">{{ 'app.cancel' | translate }}</button>
-        }
-      </div>
-    </form>
-  </article>
+      <form (ngSubmit)="submit()" class="catalog-form">
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ 'customer.firstName' | translate }}</label>
+            <input class="form-control" [ngModel]="form().firstName" name="firstName" (ngModelChange)="updateField('firstName', $event)" />
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ 'customer.lastName' | translate }}</label>
+            <input class="form-control" [ngModel]="form().lastName" name="lastName" (ngModelChange)="updateField('lastName', $event)" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'app.email' | translate }}</label>
+            <input class="form-control" type="email" [ngModel]="form().email" name="email" (ngModelChange)="updateField('email', $event)" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'customer.address' | translate }}</label>
+            <input class="form-control" [ngModel]="form().address" name="address" (ngModelChange)="updateField('address', $event)" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'app.phone' | translate }}</label>
+            <input class="form-control" [ngModel]="form().phone" name="phone" (ngModelChange)="updateField('phone', $event)" />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="saving()">
+            {{ saving() ? ('app.creating' | translate) : editingId() ? ('app.update' | translate) : ('customer.create' | translate) }}
+          </button>
+          @if (editingId()) {
+            <button class="btn btn-light" type="button" (click)="resetForm()">{{ 'app.cancel' | translate }}</button>
+          }
+        </div>
+      </form>
+    </article>
+  }
 
   <article class="panel">
     <div class="panel-header">
@@ -84,7 +86,9 @@
               <th>{{ 'invoice.customer' | translate }}</th>
               <th>{{ 'app.email' | translate }}</th>
               <th>{{ 'app.phone' | translate }}</th>
-              <th class="text-end">{{ 'app.actions' | translate }}</th>
+              @if (isAdmin) {
+                <th class="text-end">{{ 'app.actions' | translate }}</th>
+              }
             </tr>
           </thead>
           <tbody>
@@ -96,10 +100,12 @@
                 </td>
                 <td>{{ customer.email }}</td>
                 <td>{{ customer.phone || '-' }}</td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-secondary" type="button" (click)="edit(customer)">{{ 'app.edit' | translate }}</button>
-                  <button class="btn btn-sm btn-outline-danger ms-2" type="button" (click)="remove(customer)">{{ 'app.delete' | translate }}</button>
-                </td>
+                @if (isAdmin) {
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="edit(customer)">{{ 'app.edit' | translate }}</button>
+                    <button class="btn btn-sm btn-outline-danger ms-2" type="button" (click)="remove(customer)">{{ 'app.delete' | translate }}</button>
+                  </td>
+                }
               </tr>
             }
           </tbody>

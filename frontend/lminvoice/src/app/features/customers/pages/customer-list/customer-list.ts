@@ -4,6 +4,7 @@ import { Customer, CustomerPayload } from '../../models/customer';
 import { CustomerService } from '../../services/customer.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslationService } from '../../../../core/i18n/translation.service';
+import { Auth } from '../../../../core/services/auth';
 
 @Component({
   selector: 'app-customer-list',
@@ -15,6 +16,7 @@ import { TranslationService } from '../../../../core/i18n/translation.service';
 export class CustomerList {
   private customerService = inject(CustomerService);
   private translationService = inject(TranslationService);
+  private authService = inject(Auth);
 
   customers = signal<Customer[]>([]);
   loading = signal(true);
@@ -23,6 +25,7 @@ export class CustomerList {
   editingId = signal<number | null>(null);
   errorMessage = signal('');
   successMessage = signal('');
+  isAdmin = this.authService.hasRole('ROLE_ADMIN');
 
   form = signal<CustomerPayload>({
     firstName: '',

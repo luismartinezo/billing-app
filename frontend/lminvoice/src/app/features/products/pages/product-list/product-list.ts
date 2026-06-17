@@ -5,6 +5,7 @@ import { Product, ProductPayload } from '../../models/product';
 import { ProductService } from '../../services/product.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslationService } from '../../../../core/i18n/translation.service';
+import { Auth } from '../../../../core/services/auth';
 
 @Component({
   selector: 'app-product-list',
@@ -16,6 +17,7 @@ import { TranslationService } from '../../../../core/i18n/translation.service';
 export class ProductList {
   private productService = inject(ProductService);
   private translationService = inject(TranslationService);
+  private authService = inject(Auth);
 
   products = signal<Product[]>([]);
   loading = signal(true);
@@ -24,6 +26,7 @@ export class ProductList {
   editingId = signal<number | null>(null);
   errorMessage = signal('');
   successMessage = signal('');
+  isAdmin = this.authService.hasRole('ROLE_ADMIN');
 
   form = signal<ProductPayload>({
     name: '',

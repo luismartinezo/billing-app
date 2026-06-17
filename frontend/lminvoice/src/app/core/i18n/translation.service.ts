@@ -63,7 +63,7 @@ const TRANSLATIONS: TranslationDictionary = {
   'register.creating': { es: 'Creando cuenta...', en: 'Creating account...' },
   'register.hasAccount': { es: '¿Ya tienes una cuenta?', en: 'Already have an account?' },
   'register.backToLogin': { es: 'Volver al login', en: 'Back to login' },
-  'register.roleNote': { es: 'Las cuentas nuevas se crean con rol USER. El rol ADMIN debe asignarse solo desde administración.', en: 'New accounts are created with the USER role. The ADMIN role should only be assigned from administration.' },
+  'register.roleNote': { es: 'Las cuentas nuevas se crean con rol USER. Solo el OWNER debe promover usuarios a ADMIN.', en: 'New accounts are created with the USER role. Only the OWNER should promote users to ADMIN.' },
   'register.validationRequired': { es: 'Completa todos los campos con datos válidos.', en: 'Complete all fields with valid data.' },
   'register.passwordMismatch': { es: 'Las contraseñas no coinciden.', en: 'Passwords do not match.' },
   'register.success': { es: 'Cuenta creada correctamente. Redirigiendo al login...', en: 'Account created successfully. Redirecting to login...' },
