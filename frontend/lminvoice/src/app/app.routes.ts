@@ -76,6 +76,14 @@ export const routes: Routes = [
             .then(m => m.ReportsDashboard)
       },
       {
+        path: 'users',
+        canActivate: [roleGuard],
+        data: { roles: ['ROLE_OWNER'] },
+        loadComponent: () =>
+          import('./features/users/pages/user-management/user-management')
+            .then(m => m.UserManagement)
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'

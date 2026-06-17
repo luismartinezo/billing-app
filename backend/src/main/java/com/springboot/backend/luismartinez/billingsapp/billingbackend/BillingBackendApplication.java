@@ -44,13 +44,14 @@ public class BillingBackendApplication {
 		@Override
 		public void run(String... args) {
 
-			if(roleRepository.count()==0){
-				roleRepository.save(new Role(null,"ROLE_ADMIN"));
-				roleRepository.save(new Role(null,"ROLE_USER"));
-			}
+			ensureRole("ROLE_OWNER");
+			ensureRole("ROLE_ADMIN");
+			ensureRole("ROLE_USER");
 
 			if(userRepository.findByUsername("admin").isEmpty()){
+				Role ownerRole = roleRepository.findByName("ROLE_OWNER").orElseThrow();
 				Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElseThrow();
+				Role userRole = roleRepository.findByName("ROLE_USER").orElseThrow();
 
 				User admin = new User();
 				admin.setName("Admin");
@@ -58,15 +59,33 @@ public class BillingBackendApplication {
 				admin.setEmail("admin@mail.com");
 				admin.setUsername("admin");
 				admin.setPassword(passwordEncoder.encode("1234"));
-				admin.setRoles(List.of(adminRole));
+				admin.setRoles(List.of(ownerRole, adminRole, userRole));
 
 				userRepository.save(admin);
 				System.out.println(admin);
+			} else {
+				ensureOwnerAdminRoles();
 			}
 
 			seedCustomers();
 			seedProducts();
 
+		}
+
+		private void ensureRole(String name) {
+			if (roleRepository.findByName(name).isEmpty()) {
+				roleRepository.save(new Role(null, name));
+			}
+		}
+
+		private void ensureOwnerAdminRoles() {
+			User admin = userRepository.findByUsername("admin").orElseThrow();
+			Role ownerRole = roleRepository.findByName("ROLE_OWNER").orElseThrow();
+			Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElseThrow();
+			Role userRole = roleRepository.findByName("ROLE_USER").orElseThrow();
+
+			admin.setRoles(List.of(ownerRole, adminRole, userRole));
+			userRepository.save(admin);
 		}
 
 		private void seedCustomers() {

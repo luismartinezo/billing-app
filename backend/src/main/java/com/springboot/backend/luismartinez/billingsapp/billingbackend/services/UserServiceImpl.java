@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.Role;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.User;
+import com.springboot.backend.luismartinez.billingsapp.billingbackend.exceptions.BusinessException;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.models.IUser;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.models.UserRequest;
 import com.springboot.backend.luismartinez.billingsapp.billingbackend.repositories.RoleRepository;
@@ -71,7 +72,11 @@ public class UserServiceImpl implements UserService{
             userDb.setName(user.getName());
             userDb.setUsername(user.getUsername());
 
-            userDb.setRoles(getRoles(user));
+            List<Role> roles = getRoles(user);
+            if (hasRole(userDb, "ROLE_OWNER")) {
+                roleRepository.findByName("ROLE_OWNER").ifPresent(roles::add);
+            }
+            userDb.setRoles(roles);
             return Optional.of(repository.save(userDb));
         }
         return Optional.empty();
@@ -80,6 +85,13 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public void deleteById(Long id) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new BusinessException("User not found"));
+
+        if (hasRole(user, "ROLE_OWNER")) {
+            throw new BusinessException("Owner users cannot be deleted");
+        }
+
         repository.deleteById(id);
     }
 
@@ -93,6 +105,11 @@ public class UserServiceImpl implements UserService{
             optionalRoleAdmin.ifPresent(roles::add);
         }
         return roles;
+    }
+
+    private boolean hasRole(User user, String roleName) {
+        return user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals(roleName));
     }
 
 }

@@ -67,7 +67,7 @@ public class UserController {
                 .body(Collections.singletonMap("error", "The user was not found by ID:" + id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('OWNER')")
     @PostMapping("/create")
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
         if (result.hasErrors()) {

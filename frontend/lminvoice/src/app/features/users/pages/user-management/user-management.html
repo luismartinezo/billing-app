@@ -1,0 +1,128 @@
+<section class="page-heading">
+  <div>
+    <span class="eyebrow">{{ 'users.section' | translate }}</span>
+    <h1>{{ 'users.title' | translate }}</h1>
+    <p>{{ 'users.description' | translate }}</p>
+  </div>
+</section>
+
+@if (errorMessage()) {
+  <div class="alert alert-danger">{{ errorMessage() }}</div>
+}
+
+@if (successMessage()) {
+  <div class="alert alert-success">{{ successMessage() }}</div>
+}
+
+<section class="users-grid">
+  @if (editingId()) {
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>{{ 'users.edit' | translate }}</h2>
+          <p>{{ 'users.editHint' | translate }}</p>
+        </div>
+      </div>
+
+      <form class="user-form" (ngSubmit)="submit()">
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ 'customer.firstName' | translate }}</label>
+            <input class="form-control" [ngModel]="form().name" name="name" (ngModelChange)="updateTextField('name', $event)" />
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ 'customer.lastName' | translate }}</label>
+            <input class="form-control" [ngModel]="form().lastname" name="lastname" (ngModelChange)="updateTextField('lastname', $event)" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'app.email' | translate }}</label>
+            <input class="form-control" type="email" [ngModel]="form().email" name="email" (ngModelChange)="updateTextField('email', $event)" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">{{ 'login.username' | translate }}</label>
+            <input class="form-control" [ngModel]="form().username" name="username" (ngModelChange)="updateTextField('username', $event)" />
+          </div>
+          <div class="col-12">
+            <label class="role-toggle">
+              <input type="checkbox" [ngModel]="form().admin" name="admin" (ngModelChange)="updateAdmin($event)" />
+              <span>{{ 'users.adminRole' | translate }}</span>
+            </label>
+            <small class="form-text">{{ 'users.adminHint' | translate }}</small>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="saving()">
+            {{ saving() ? ('app.creating' | translate) : ('app.update' | translate) }}
+          </button>
+          <button class="btn btn-light" type="button" (click)="resetForm()">{{ 'app.cancel' | translate }}</button>
+        </div>
+      </form>
+    </article>
+  }
+
+  <article class="panel list-panel">
+    <div class="panel-header">
+      <div>
+        <h2>{{ 'users.list' | translate }}</h2>
+        <p>{{ users().length }} {{ 'users.registered' | translate }}</p>
+      </div>
+    </div>
+
+    <input
+      class="form-control mb-3"
+      type="search"
+      [placeholder]="'users.search' | translate"
+      [value]="searchTerm()"
+      (input)="searchTerm.set($any($event.target).value)"
+    />
+
+    @if (loading()) {
+      <div class="state-box">{{ 'users.loading' | translate }}</div>
+    } @else if (filteredUsers().length > 0) {
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{{ 'users.user' | translate }}</th>
+              <th>{{ 'app.email' | translate }}</th>
+              <th>{{ 'users.roles' | translate }}</th>
+              <th class="text-end">{{ 'app.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of filteredUsers(); track user.id) {
+              <tr>
+                <td>
+                  <strong>{{ user.name }} {{ user.lastname }}</strong>
+                  <span>{{ user.username }}</span>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <div class="role-list">
+                    @for (role of user.roles; track role) {
+                      <span class="role-badge" [class.owner]="role === 'ROLE_OWNER'">{{ roleLabel(role) }}</span>
+                    }
+                  </div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-secondary" type="button" (click)="edit(user)">{{ 'app.edit' | translate }}</button>
+                  <button
+                    class="btn btn-sm btn-outline-danger ms-2"
+                    type="button"
+                    (click)="remove(user)"
+                    [disabled]="isOwner(user)"
+                  >
+                    {{ 'app.delete' | translate }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="state-box empty">{{ 'users.empty' | translate }}</div>
+    }
+  </article>
+</section>

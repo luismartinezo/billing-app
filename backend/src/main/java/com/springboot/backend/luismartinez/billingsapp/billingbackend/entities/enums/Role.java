@@ -2,5 +2,6 @@ package com.springboot.backend.luismartinez.billingsapp.billingbackend.entities.
 
 public enum Role {
     USER,
-    ADMIN
+    ADMIN,
+    OWNER
 }

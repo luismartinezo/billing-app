@@ -58,5 +58,14 @@
         }
       </a>
     }
+
+    @if (isOwner) {
+      <a class="nav-link" routerLink="/users" routerLinkActive="active">
+        <span class="nav-icon">U</span>
+        @if (!collapsed()) {
+          <span>{{ 'nav.users' | translate }}</span>
+        }
+      </a>
+    }
   </nav>
 </aside>

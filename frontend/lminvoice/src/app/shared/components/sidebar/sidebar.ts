@@ -15,4 +15,5 @@ export class Sidebar {
 
   collapsed = input(false);
   isAdmin = this.authService.hasAnyRole(['ROLE_OWNER', 'ROLE_ADMIN']);
+  isOwner = this.authService.hasRole('ROLE_OWNER');
 }
