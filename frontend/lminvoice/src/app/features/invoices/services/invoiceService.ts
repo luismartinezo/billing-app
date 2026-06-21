@@ -31,6 +31,18 @@ export class InvoiceService {
     return this.http.post<Payment>(`${this.baseUrl}/${invoiceId}/payments/add`, payment);
   }
 
+  issue(invoiceId: number): Observable<Invoice> {
+    return this.http.post<Invoice>(`${this.baseUrl}/${invoiceId}/issue`, {});
+  }
+
+  cancel(invoiceId: number): Observable<Invoice> {
+    return this.http.post<Invoice>(`${this.baseUrl}/${invoiceId}/cancel`, {});
+  }
+
+  delete(invoiceId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${invoiceId}`);
+  }
+
   getPdf(invoiceId: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/${invoiceId}/pdf`, { responseType: 'blob' });
   }

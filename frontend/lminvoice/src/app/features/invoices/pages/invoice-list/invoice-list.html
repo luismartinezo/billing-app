@@ -23,7 +23,7 @@
     </div>
 
     <div class="status-filters">
-      @for (status of ['ALL', 'PENDING', 'PAID', 'CANCELLED', 'ISSUED']; track status) {
+      @for (status of ['ALL', 'DRAFT', 'ISSUED', 'OVERDUE', 'PAID', 'CANCELLED']; track status) {
         <button
           class="btn btn-sm"
           type="button"
