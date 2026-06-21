@@ -96,6 +96,14 @@ const TRANSLATIONS: TranslationDictionary = {
   'dashboard.selectQuickQuery': { es: 'Selecciona una consulta rápida.', en: 'Select a quick query.' },
   'dashboard.agentError': { es: 'No se pudo consultar el agente local.', en: 'The local agent could not be queried.' },
 
+  'agent.open': { es: 'Abrir Invoice Agent', en: 'Open Invoice Agent' },
+  'agent.subtitle': { es: 'Consultas locales del negocio', en: 'Local business queries' },
+  'agent.welcome': { es: 'Hola. Puedo ayudarte con facturas pendientes, pagadas, ingresos mensuales, total de facturas y top clientes.', en: 'Hi. I can help with pending invoices, paid invoices, monthly revenue, total invoices, and top clients.' },
+  'agent.placeholder': { es: 'Escribe tu consulta...', en: 'Type your question...' },
+  'agent.send': { es: 'Enviar', en: 'Send' },
+  'agent.thinking': { es: 'Consultando...', en: 'Thinking...' },
+  'agent.error': { es: 'No se pudo consultar el agente local.', en: 'The local agent could not be queried.' },
+
   'invoice.section': { es: 'Facturación', en: 'Billing' },
   'invoice.single': { es: 'Factura', en: 'Invoice' },
   'invoice.title': { es: 'Facturas', en: 'Invoices' },

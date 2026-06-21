@@ -1,0 +1,51 @@
+<div class="agent-widget" [class.open]="open()">
+  @if (open()) {
+    <section class="agent-panel" aria-live="polite">
+      <header class="agent-header">
+        <div>
+          <strong>Invoice Agent</strong>
+          <span>{{ 'agent.subtitle' | translate }}</span>
+        </div>
+        <button class="icon-button" type="button" (click)="toggleOpen()" [attr.aria-label]="'app.close' | translate">
+          x
+        </button>
+      </header>
+
+      <div class="quick-actions">
+        <button type="button" (click)="ask('pending invoices')">{{ 'dashboard.quickPending' | translate }}</button>
+        <button type="button" (click)="ask('paid invoices')">{{ 'dashboard.quickPaid' | translate }}</button>
+        <button type="button" (click)="ask('monthly revenue')">{{ 'dashboard.quickRevenue' | translate }}</button>
+        <button type="button" (click)="ask('top clients')">{{ 'dashboard.quickTopClients' | translate }}</button>
+      </div>
+
+      <div class="messages">
+        @for (message of messages(); track $index) {
+          <div class="message" [class.user]="message.sender === 'user'" [class.agent]="message.sender === 'agent'">
+            <pre>{{ message.text }}</pre>
+          </div>
+        }
+
+        @if (loading()) {
+          <div class="message agent typing">{{ 'agent.thinking' | translate }}</div>
+        }
+      </div>
+
+      <div class="composer">
+        <input
+          type="text"
+          [placeholder]="'agent.placeholder' | translate"
+          [value]="question()"
+          (input)="updateQuestion($any($event.target).value)"
+          (keydown.enter)="ask()"
+        />
+        <button type="button" (click)="ask()" [disabled]="loading() || !question().trim()">
+          {{ 'agent.send' | translate }}
+        </button>
+      </div>
+    </section>
+  }
+
+  <button class="agent-launcher" type="button" (click)="toggleOpen()" [attr.aria-label]="'agent.open' | translate">
+    <span>AI</span>
+  </button>
+</div>

@@ -36,7 +36,7 @@
   </article>
 </section>
 
-<section class="dashboard-grid">
+<section class="dashboard-grid single-column">
   <article class="panel">
     <div class="panel-header">
       <div>
@@ -80,41 +80,4 @@
     }
   </article>
 
-  <article class="panel agent-panel">
-    <div class="panel-header">
-      <div>
-        <h2>Invoice Agent</h2>
-        <p>{{ 'dashboard.agentSubtitle' | translate }}</p>
-      </div>
-    </div>
-
-    <div class="quick-actions">
-      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('pending invoices')">{{ 'dashboard.quickPending' | translate }}</button>
-      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('paid invoices')">{{ 'dashboard.quickPaid' | translate }}</button>
-      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('monthly revenue')">{{ 'dashboard.quickRevenue' | translate }}</button>
-      <button type="button" class="btn btn-light btn-sm" (click)="askAgent('top clients')">{{ 'dashboard.quickTopClients' | translate }}</button>
-    </div>
-
-    <div class="input-group">
-      <input
-        class="form-control"
-        type="text"
-        [value]="agentQuestion()"
-        (input)="agentQuestion.set($any($event.target).value)"
-      />
-      <button class="btn btn-primary" type="button" (click)="askAgent()" [disabled]="agentLoading()">
-        {{ 'dashboard.ask' | translate }}
-      </button>
-    </div>
-
-    <div class="agent-answer">
-      @if (agentLoading()) {
-        {{ 'dashboard.asking' | translate }}
-      } @else if (agentAnswer()) {
-        <pre>{{ agentAnswer() }}</pre>
-      } @else {
-        <span>{{ 'dashboard.selectQuickQuery' | translate }}</span>
-      }
-    </div>
-  </article>
 </section>

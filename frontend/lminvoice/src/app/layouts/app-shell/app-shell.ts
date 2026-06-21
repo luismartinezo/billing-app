@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { Auth } from '../../core/services/auth';
+import { FloatingInvoiceAgent } from '../../features/agent/components/floating-invoice-agent/floating-invoice-agent';
 import { Navbar } from '../../shared/components/navbar/navbar';
 import { Sidebar } from '../../shared/components/sidebar/sidebar';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, Navbar, Sidebar],
+  imports: [RouterOutlet, Navbar, Sidebar, FloatingInvoiceAgent],
   templateUrl: './app-shell.html',
   styleUrl: './app-shell.css',
   changeDetection: ChangeDetectionStrategy.OnPush

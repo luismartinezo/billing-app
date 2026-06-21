@@ -6,9 +6,7 @@ import { Auth } from '../../../../core/services/auth';
 import { User } from '../../../../core/models/user';
 import { InvoiceService } from '../../../invoices/services/invoiceService';
 import { Invoice } from '../../../invoices/models/invoice';
-import { InvoiceAgentService } from '../../../agent/services/invoice-agent.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
-import { TranslationService } from '../../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,16 +18,11 @@ import { TranslationService } from '../../../../core/i18n/translation.service';
 export class Dashboard {
   private authService = inject(Auth);
   private invoiceService = inject(InvoiceService);
-  private invoiceAgentService = inject(InvoiceAgentService);
   private router = inject(Router);
-  private translationService = inject(TranslationService);
 
   user = signal<User | null>(this.authService.getUser());
   invoices = signal<Invoice[]>([]);
   loading = signal(true);
-  agentLoading = signal(false);
-  agentQuestion = signal('monthly revenue');
-  agentAnswer = signal('');
 
   totalInvoices = computed(() => this.invoices().length);
   pendingInvoices = computed(() => this.invoices().filter(invoice => invoice.status === 'PENDING').length);
@@ -48,27 +41,6 @@ export class Dashboard {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
-  }
-
-  askAgent(message = this.agentQuestion()): void {
-    const question = message.trim();
-
-    if (!question) {
-      return;
-    }
-
-    this.agentQuestion.set(question);
-    this.agentLoading.set(true);
-    this.invoiceAgentService.ask(question).subscribe({
-      next: answer => {
-        this.agentAnswer.set(answer);
-        this.agentLoading.set(false);
-      },
-      error: () => {
-        this.agentAnswer.set(this.translationService.translate('dashboard.agentError'));
-        this.agentLoading.set(false);
-      }
-    });
   }
 
   private loadInvoices(): void {

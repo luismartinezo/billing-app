@@ -1,0 +1,177 @@
+.agent-widget {
+  bottom: 22px;
+  position: fixed;
+  right: 22px;
+  z-index: 1050;
+}
+
+.agent-panel {
+  background: #fff;
+  border: 1px solid #d7dde4;
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(36, 52, 71, 0.22);
+  display: grid;
+  grid-template-rows: auto auto minmax(180px, 1fr) auto;
+  height: min(640px, calc(100vh - 110px));
+  margin-bottom: 12px;
+  overflow: hidden;
+  width: min(380px, calc(100vw - 32px));
+}
+
+.agent-header {
+  align-items: center;
+  background: #243447;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+}
+
+.agent-header strong,
+.agent-header span {
+  display: block;
+}
+
+.agent-header strong {
+  font-size: 15px;
+}
+
+.agent-header span {
+  color: #cbd5e1;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.icon-button,
+.agent-launcher,
+.quick-actions button,
+.composer button {
+  border: 0;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.icon-button {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #fff;
+  display: inline-flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.quick-actions button {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  color: #34495e;
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.messages {
+  background: #f8fafc;
+  display: grid;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 14px 12px;
+}
+
+.message {
+  border-radius: 8px;
+  max-width: 88%;
+  padding: 10px 12px;
+}
+
+.message pre {
+  font-family: inherit;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.message.agent {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  color: #243447;
+  justify-self: start;
+}
+
+.message.user {
+  background: #1ab394;
+  color: #fff;
+  justify-self: end;
+}
+
+.message.typing {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.composer {
+  background: #fff;
+  border-top: 1px solid #eef2f7;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 12px;
+}
+
+.composer input {
+  border: 1px solid #d7dde4;
+  border-radius: 8px;
+  color: #243447;
+  min-width: 0;
+  padding: 10px 12px;
+}
+
+.composer button {
+  background: #1ab394;
+  border-radius: 8px;
+  color: #fff;
+  padding: 0 14px;
+}
+
+.composer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.agent-launcher {
+  align-items: center;
+  background: #1ab394;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(26, 179, 148, 0.35);
+  color: #fff;
+  display: inline-flex;
+  height: 56px;
+  justify-content: center;
+  width: 56px;
+}
+
+.agent-launcher span {
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+@media (max-width: 640px) {
+  .agent-widget {
+    bottom: 14px;
+    right: 14px;
+  }
+
+  .agent-panel {
+    height: min(620px, calc(100vh - 96px));
+    width: calc(100vw - 28px);
+  }
+}
