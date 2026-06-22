@@ -1,0 +1,84 @@
+.toast-stack {
+  display: grid;
+  gap: 10px;
+  max-width: min(390px, calc(100vw - 32px));
+  position: fixed;
+  right: 20px;
+  top: 78px;
+  width: 100%;
+  z-index: 1300;
+}
+
+.app-toast {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #1c84c6;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(36, 52, 71, 0.18);
+  color: #243447;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 12px;
+}
+
+.app-toast.success {
+  border-left-color: #1ab394;
+}
+
+.app-toast.error {
+  border-left-color: #d92d20;
+}
+
+.app-toast.warning {
+  border-left-color: #f8ac59;
+}
+
+.status-mark {
+  background: #1c84c6;
+  border-radius: 999px;
+  height: 9px;
+  width: 9px;
+}
+
+.success .status-mark {
+  background: #1ab394;
+}
+
+.error .status-mark {
+  background: #d92d20;
+}
+
+.warning .status-mark {
+  background: #f8ac59;
+}
+
+.app-toast p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.app-toast button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #6b7280;
+  cursor: pointer;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 28px;
+}
+
+@media (max-width: 640px) {
+  .toast-stack {
+    left: 14px;
+    max-width: none;
+    right: 14px;
+    top: 72px;
+    width: auto;
+  }
+}

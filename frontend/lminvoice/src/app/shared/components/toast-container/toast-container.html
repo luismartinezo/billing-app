@@ -1,0 +1,15 @@
+<div class="toast-stack" aria-live="polite" aria-atomic="false">
+  @for (notification of notificationService.notifications(); track notification.id) {
+    <div class="app-toast" [class]="'app-toast ' + notification.type" role="status">
+      <span class="status-mark"></span>
+      <p>{{ notification.message }}</p>
+      <button
+        type="button"
+        (click)="notificationService.dismiss(notification.id)"
+        [attr.aria-label]="'app.close' | translate"
+      >
+        x
+      </button>
+    </div>
+  }
+</div>

@@ -35,6 +35,11 @@ const TRANSLATIONS: TranslationDictionary = {
   'app.subtotal': { es: 'Subtotal', en: 'Subtotal' },
   'app.tax': { es: 'IVA 19%', en: 'VAT 19%' },
 
+  'error.network': { es: 'No se pudo conectar con el servidor. Revisa que backend y Docker estén disponibles.', en: 'Could not connect to the server. Check that the backend and Docker are available.' },
+  'error.forbidden': { es: 'No tienes permisos para realizar esta acción.', en: 'You do not have permission to perform this action.' },
+  'error.server': { es: 'El servidor encontró un problema. Inténtalo nuevamente.', en: 'The server encountered a problem. Please try again.' },
+  'error.sessionExpired': { es: 'Tu sesión expiró. Inicia sesión nuevamente.', en: 'Your session has expired. Please sign in again.' },
+
   'nav.dashboard': { es: 'Dashboard', en: 'Dashboard' },
   'nav.invoices': { es: 'Facturas', en: 'Invoices' },
   'nav.newInvoice': { es: 'Nueva factura', en: 'New invoice' },
